@@ -4,14 +4,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class UserDB {
-    private final Connection conn;
+public class UserDB extends BaseDB {
 
     public UserDB() throws SQLException {
-        this.conn = SQLConnection.getConnection();
-        createTable();
     }
 
+    @Override
     public void createTable() throws SQLException {
         String query = "CREATE TABLE IF NOT EXISTS users ("
                 + "id INT AUTO_INCREMENT PRIMARY KEY,"
