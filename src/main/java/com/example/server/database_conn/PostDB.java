@@ -17,6 +17,8 @@ public class PostDB extends BaseDB {
                 + "title VARCHAR(255) NOT NULL,"
                 + "content VARCHAR(3000) NOT NULL,"
                 + "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+                + "likes INT NOT NULL DEFAULT 0,"
+                + "comments INT NOT NULL DEFAULT 0,"
                 + "FOREIGN KEY(email) REFERENCES users (email) ON DELETE CASCADE"
                 + ");";
 
