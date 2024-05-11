@@ -22,7 +22,9 @@ public class UserDB extends BaseDB {
                 + "background_url VARCHAR(255),"
                 + "headline VARCHAR(220),"
                 + "country VARCHAR(60),"
-                + "city VARCHAR(60)"
+                + "city VARCHAR(60),"
+                + "followers INT NOT NULL DEFAULT 0,"
+                + "connections INT NOT NULL DEFAULT 0,"
                 + ")";
 
         Statement statement = conn.createStatement();
