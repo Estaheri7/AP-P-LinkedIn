@@ -24,7 +24,7 @@ public class UserDB extends BaseDB {
                 + "country VARCHAR(60),"
                 + "city VARCHAR(60),"
                 + "followers INT NOT NULL DEFAULT 0,"
-                + "connections INT NOT NULL DEFAULT 0,"
+                + "connections INT NOT NULL DEFAULT 0"
                 + ")";
 
         Statement statement = conn.createStatement();
