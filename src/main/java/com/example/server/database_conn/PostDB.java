@@ -11,6 +11,16 @@ public class PostDB extends BaseDB {
 
     @Override
     public void createTable() throws SQLException {
+        String query = "CREATE TABLE IF NOT EXISTS posts ("
+                + "id INT AUTO_INCREMENT PRIMARY KEY,"
+                + "email VARCHAR(255) NOT NULL,"
+                + "title VARCHAR(255) NOT NULL,"
+                + "content VARCHAR(3000) NOT NULL,"
+                + "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+                + "FOREIGN KEY(email) REFERENCES users (email) ON DELETE CASCADE"
+                + ");";
 
+        Statement statement = conn.createStatement();
+        statement.executeUpdate(query);
     }
 }
