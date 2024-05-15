@@ -1,5 +1,8 @@
 package com.example.server.database_conn;
 
+import com.example.server.models.Like;
+
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -22,5 +25,26 @@ public class LikeDB extends BaseDB {
 
         Statement statement = conn.createStatement();
         statement.executeUpdate(query);
+    }
+
+    public void insertData(Like like) throws SQLException {
+        String query = "INSERT INTO likes (post_id, email) VALUES (?, ?)";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, like.getPostId());
+        preparedStatement.setString(2, like.getEmail());
+        preparedStatement.executeUpdate();
+    }
+
+    public void deleteData(int id) throws SQLException {
+        String query = "DELETE FROM likes WHERE id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, id);
+        preparedStatement.executeUpdate();
+    }
+
+    public void deleteAllData() throws SQLException {
+        String query = "DELETE FROM likes";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.executeUpdate();
     }
 }
