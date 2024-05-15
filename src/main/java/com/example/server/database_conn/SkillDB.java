@@ -42,15 +42,14 @@ public class SkillDB extends BaseDB {
     }
 
     public void updateData(Skill skill) throws SQLException {
-        String query = "UPDATE skills SET email = ?, skill_1 = ?, skill_2 = ?, skill_3 = ?, skill_4 = ?, skill_5 = ? WHERE id = ?";
+        String query = "UPDATE skills SET skill_1 = ?, skill_2 = ?, skill_3 = ?, skill_4 = ?, skill_5 = ? WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
-        preparedStatement.setString(1, skill.getEmail());
-        preparedStatement.setString(2, skill.getSkill1());
-        preparedStatement.setString(3, skill.getSkill2());
-        preparedStatement.setString(4, skill.getSkill3());
-        preparedStatement.setString(5, skill.getSkill4());
-        preparedStatement.setString(6, skill.getSkill5());
-        preparedStatement.setInt(7, skill.getId());
+        preparedStatement.setString(1, skill.getSkill1());
+        preparedStatement.setString(2, skill.getSkill2());
+        preparedStatement.setString(3, skill.getSkill3());
+        preparedStatement.setString(4, skill.getSkill4());
+        preparedStatement.setString(5, skill.getSkill5());
+        preparedStatement.setString(6, skill.getEmail());
         preparedStatement.executeUpdate();
     }
 
