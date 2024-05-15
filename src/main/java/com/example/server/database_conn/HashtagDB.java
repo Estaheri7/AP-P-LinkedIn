@@ -1,5 +1,8 @@
 package com.example.server.database_conn;
 
+import com.example.server.models.Hashtag;
+
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -20,5 +23,34 @@ public class HashtagDB extends BaseDB {
 
         Statement statement = conn.createStatement();
         statement.executeUpdate(query);
+    }
+
+    public void insertData(Hashtag hashtag) throws SQLException {
+        String query = "INSERT INTO hashtags (post_id, hashtag) VALUES (?, ?)";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, hashtag.getPostId());
+        preparedStatement.setString(2, hashtag.getHashtag());
+        preparedStatement.executeUpdate();
+    }
+
+    public void updateData(Hashtag hashtag) throws SQLException {
+        String query = "UPDATE hashtags SET hashtag = ? WHERE id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, hashtag.getHashtag());
+        preparedStatement.setInt(2, hashtag.getId());
+        preparedStatement.executeUpdate();
+    }
+
+    public void deleteData(int id) throws SQLException {
+        String query = "DELETE FROM hashtags WHERE id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, id);
+        preparedStatement.executeUpdate();
+    }
+
+    public void deleteAllData() throws SQLException {
+        String query = "DELETE FROM hashtags";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.executeUpdate();
     }
 }
