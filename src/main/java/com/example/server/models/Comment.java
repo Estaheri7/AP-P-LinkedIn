@@ -2,11 +2,11 @@ package com.example.server.models;
 
 public class Comment {
     private int id;
-    private String postId;
+    private int postId;
     private String email;
     private String comment;
 
-    public Comment(String postId, String email, String comment) {
+    public Comment(int postId, String email, String comment) {
         this.postId = postId;
         this.email = email;
         this.comment = comment;
@@ -20,11 +20,11 @@ public class Comment {
         this.id = id;
     }
 
-    public String getPostId() {
+    public int getPostId() {
         return postId;
     }
 
-    public void setPostId(String postId) {
+    public void setPostId(int postId) {
         this.postId = postId;
     }
 
