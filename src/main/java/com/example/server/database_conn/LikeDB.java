@@ -28,7 +28,7 @@ public class LikeDB extends BaseDB {
     }
 
     public void insertData(Like like) throws SQLException {
-        String query = "INSERT INTO likes (post_id, email)";
+        String query = "INSERT INTO likes (post_id, email) VALUES (?, ?)";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setInt(1, like.getPostId());
         preparedStatement.setString(2, like.getEmail());
