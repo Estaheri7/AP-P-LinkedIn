@@ -39,11 +39,11 @@ public class PostDB extends BaseDB {
     }
 
     public void updateData(Post post) throws SQLException {
-        String query = "UPDATE posts SET title=?, content=? WHERE email=?";
+        String query = "UPDATE posts SET title=?, content=? WHERE id=?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, post.getTitle());
         preparedStatement.setString(2, post.getContent());
-        preparedStatement.setString(3, post.getAuthor());
+        preparedStatement.setInt(3, post.getId());
         preparedStatement.executeUpdate();
     }
 
