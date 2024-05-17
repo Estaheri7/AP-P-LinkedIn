@@ -12,12 +12,33 @@ public class User {
     private String headline;
     private String country;
     private String city;
+    private int followers;
+    private int following;
+    private int connections;
 
     public User(String email, String password, String firstName, String lastName) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public User(int id, String email, String password, String firstName, String lastName,
+                String avatar_url, String background_url, String headline, String country, String city,
+                int followers, int following, int connections) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.avatar_url = avatar_url;
+        this.background_url = background_url;
+        this.headline = headline;
+        this.country = country;
+        this.city = city;
+        this.followers = followers;
+        this.following = following;
+        this.connections = connections;
     }
 
     public int getId() {
@@ -106,5 +127,30 @@ public class User {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+
+    public int getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(int followers) {
+        this.followers = followers;
+    }
+
+    public int getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(int following) {
+        this.following = following;
+    }
+
+    public int getConnections() {
+        return connections;
+    }
+
+    public void setConnections(int connections) {
+        this.connections = connections;
     }
 }
