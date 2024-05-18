@@ -80,4 +80,32 @@ public class UserDB extends BaseDB {
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
     }
+
+    public User getUser(String email) throws SQLException {
+        String query = "SELECT * FROM users WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String userEmail = resultSet.getString("email");
+            String password = resultSet.getString("password");
+            String firstName = resultSet.getString("name");
+            String lastName = resultSet.getString("lastName");
+            String additionalName = resultSet.getString("additionalName");
+            String avatarUrl = resultSet.getString("avatar_url");
+            String backgroundUrl = resultSet.getString("background_url");
+            String headline = resultSet.getString("headline");
+            String country = resultSet.getString("country");
+            String city = resultSet.getString("city");
+            int followers = resultSet.getInt("followers");
+            int followings = resultSet.getInt("followings");
+            int connections = resultSet.getInt("connections");
+
+            return new User(id, userEmail, password, firstName, lastName, additionalName, avatarUrl,
+                    backgroundUrl, headline, country, city, followers, followings, connections);
+        }
+
+        return null;
+    }
 }
