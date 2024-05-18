@@ -78,4 +78,25 @@ public class PostDB extends BaseDB {
 
         return null;
     }
+
+    public Post getPost(String email) throws SQLException {
+        String query = "SELECT * FROM posts WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        if (resultSet.next()) {
+            int postId = resultSet.getInt("id");
+            String author = resultSet.getString("email");
+            String title = resultSet.getString("title");
+            String content = resultSet.getString("content");
+            Timestamp createdAt = resultSet.getTimestamp("created_at");
+            int likes = resultSet.getInt("likes");
+            int comments = resultSet.getInt("comments");
+
+            return new Post(postId, author, title, content, createdAt, likes, comments);
+        }
+
+        return null;
+    }
 }
