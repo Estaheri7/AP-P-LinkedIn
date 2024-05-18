@@ -3,6 +3,7 @@ package com.example.server.database_conn;
 import com.example.server.models.User;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class UserDB extends BaseDB {
 
@@ -107,5 +108,35 @@ public class UserDB extends BaseDB {
         }
 
         return null;
+    }
+
+    public ArrayList<User> getAllUsers() throws SQLException {
+        String query = "SELECT * FROM users";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        ArrayList<User> users = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String userEmail = resultSet.getString("email");
+            String password = resultSet.getString("password");
+            String firstName = resultSet.getString("name");
+            String lastName = resultSet.getString("lastName");
+            String additionalName = resultSet.getString("additionalName");
+            String avatarUrl = resultSet.getString("avatar_url");
+            String backgroundUrl = resultSet.getString("background_url");
+            String headline = resultSet.getString("headline");
+            String country = resultSet.getString("country");
+            String city = resultSet.getString("city");
+            int followers = resultSet.getInt("followers");
+            int followings = resultSet.getInt("followings");
+            int connections = resultSet.getInt("connections");
+
+            User user = new User(id, userEmail, password, firstName, lastName, additionalName,
+                    avatarUrl, backgroundUrl, headline, country, city, followers, followings, connections);
+
+            users.add(user);
+        }
+
+        return users;
     }
 }
