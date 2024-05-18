@@ -18,6 +18,16 @@ public class Skill {
         this.skill5 = skill5;
     }
 
+    public Skill(int id, String email, String skill1, String skill2, String skill3, String skill4, String skill5) {
+        this.id = id;
+        this.email = email;
+        this.skill1 = skill1;
+        this.skill2 = skill2;
+        this.skill3 = skill3;
+        this.skill4 = skill4;
+        this.skill5 = skill5;
+    }
+
     public int getId() {
         return id;
     }
