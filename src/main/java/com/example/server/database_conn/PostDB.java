@@ -2,9 +2,7 @@ package com.example.server.database_conn;
 
 import com.example.server.models.Post;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class PostDB extends BaseDB {
 
@@ -58,5 +56,26 @@ public class PostDB extends BaseDB {
         String query = "DELETE FROM posts";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
+    }
+
+    public Post getPost(int id) throws SQLException {
+        String query = "SELECT * FROM posts WHERE id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        if (resultSet.next()) {
+            int postId = resultSet.getInt("id");
+            String author = resultSet.getString("email");
+            String title = resultSet.getString("title");
+            String content = resultSet.getString("content");
+            Timestamp createdAt = resultSet.getTimestamp("created_at");
+            int likes = resultSet.getInt("likes");
+            int comments = resultSet.getInt("comments");
+
+            return new Post(postId, author, title, content, createdAt, likes, comments);
+        }
+
+        return null;
     }
 }
