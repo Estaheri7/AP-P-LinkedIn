@@ -21,6 +21,18 @@ public class Education {
         this.startDate = startDate;
     }
 
+    public Education(int id, String email, String schoolName, String field, double grade, Date startDate, Date endDate, String community, String description) {
+        this.id = id;
+        this.email = email;
+        this.schoolName = schoolName;
+        this.field = field;
+        this.grade = grade;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.community = community;
+        this.description = description;
+    }
+
     public int getId() {
         return id;
     }
