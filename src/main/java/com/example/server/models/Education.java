@@ -21,7 +21,7 @@ public class Education {
         this.startDate = startDate;
     }
 
-    public Education(int id, String email, String schoolName, String field, double grade, Date startDate, Date endDate, String community, String description) {
+    public Education(int id, String email, String schoolName, String field, double grade, Date startDate,Date endDate, String community, String description) {
         this.id = id;
         this.email = email;
         this.schoolName = schoolName;
@@ -32,6 +32,7 @@ public class Education {
         this.community = community;
         this.description = description;
     }
+
 
     public int getId() {
         return id;
