@@ -24,13 +24,14 @@ public class User {
     }
 
     public User(int id, String email, String password, String firstName, String lastName,
-                String avatar_url, String background_url, String headline, String country, String city,
-                int followers, int following, int connections) {
+                String additionalName, String avatar_url, String background_url, String headline,
+                String country, String city, int followers, int following, int connections) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.additionalName = additionalName;
         this.avatar_url = avatar_url;
         this.background_url = background_url;
         this.headline = headline;
