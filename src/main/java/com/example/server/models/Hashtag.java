@@ -10,6 +10,12 @@ public class Hashtag {
         this.hashtag = hashtag;
     }
 
+    public Hashtag(int id, int postId, String hashtag) {
+        this.id = id;
+        this.postId = postId;
+        this.hashtag = hashtag;
+    }
+
     public int getId() {
         return id;
     }
