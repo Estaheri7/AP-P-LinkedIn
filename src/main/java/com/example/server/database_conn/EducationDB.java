@@ -122,4 +122,27 @@ public class EducationDB extends BaseDB {
         return educations;
     }
 
+    public List<Education> getEducationByField(String field) throws SQLException {
+        String query = "SELECT * FROM education WHERE field = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, field);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Education> educations = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String email = resultSet.getString("email");
+            String schoolName = resultSet.getString("school_name");
+            float grade = resultSet.getFloat("grade");
+            Date startDate = resultSet.getDate("start_date");
+            Date endDate = resultSet.getDate("end_date");
+            String community = resultSet.getString("community");
+            String description = resultSet.getString("description");
+            Education education = new Education(id, email, schoolName, field, grade, startDate, endDate, community, description);
+            educations.add(education);
+        }
+
+        return educations;
+    }
+
 }
