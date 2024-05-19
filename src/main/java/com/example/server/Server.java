@@ -1,5 +1,6 @@
 package com.example.server;
 
+import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -22,5 +23,45 @@ public class Server {
 
     public HttpServer getServer() {
         return server;
+    }
+
+    public void get(String path, HttpHandler handler) {
+        server.createContext(path, (exchange) -> {
+            if (exchange.getRequestMethod().equals("GET")) {
+                handler.handle(exchange);
+            } else {
+
+            }
+        });
+    }
+
+    public void post(String path, HttpHandler handler) {
+        server.createContext(path, (exchange) -> {
+            if (exchange.getRequestMethod().equals("POST")) {
+                handler.handle(exchange);
+            } else {
+
+            }
+        });
+    }
+
+    public void delete(String path, HttpHandler handler) {
+        server.createContext(path, (exchange) -> {
+            if (exchange.getRequestMethod().equals("DELETE")) {
+                handler.handle(exchange);
+            } else {
+
+            }
+        });
+    }
+
+    public void put(String path, HttpHandler handler) {
+        server.createContext(path, (exchange) -> {
+            if (exchange.getRequestMethod().equals("PUT")) {
+                handler.handle(exchange);
+            } else {
+
+            }
+        });
     }
 }
