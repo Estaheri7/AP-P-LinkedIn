@@ -67,4 +67,21 @@ public class FollowDB extends BaseDB {
         return followers;
     }
 
+    public List<Follow> getFollowed(String followed) throws SQLException {
+        String query = "SELECT * FROM follows WHERE followed = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, followed);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Follow> followeds = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String follower = resultSet.getString("follower");
+            Follow follow = new Follow(id ,follower, followed);
+            followeds.add(follow);
+        }
+
+        return followeds;
+    }
+
 }
