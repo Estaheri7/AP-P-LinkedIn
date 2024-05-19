@@ -67,22 +67,24 @@ public class LikeDB extends BaseDB {
     }
 
 
-    public Like getLike(String email) throws SQLException {
+    public List<Like> getLike(String email) throws SQLException {
         String query = "SELECT * FROM likes WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        if (resultSet.next()) {
+        List<Like> likes = new ArrayList<>();
+        while (resultSet.next()) {
             int id = resultSet.getInt("id");
             int postId = resultSet.getInt("post_id");
             Timestamp likeTime = resultSet.getTimestamp("like_time");
 
-            return new Like(id, postId, email, likeTime);
+            likes.add(new Like(id, postId, email, likeTime));
         }
 
-        return null;
+        return likes;
     }
+}
 
 
 
