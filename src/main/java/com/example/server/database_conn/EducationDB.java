@@ -76,7 +76,7 @@ public class EducationDB extends BaseDB {
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
     }
-    public List<Education> getEducationByEmail(String email) throws SQLException {
+    public List<Education> getEducation(String email) throws SQLException {
         String query = "SELECT * FROM education WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
