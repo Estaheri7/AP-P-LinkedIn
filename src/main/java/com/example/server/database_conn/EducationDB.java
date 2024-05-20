@@ -3,10 +3,9 @@ package com.example.server.database_conn;
 
 import com.example.server.models.Education;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EducationDB extends BaseDB {
 
@@ -77,4 +76,96 @@ public class EducationDB extends BaseDB {
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
     }
+    public List<Education> getEducation(String email) throws SQLException {
+        String query = "SELECT * FROM education WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Education> educations = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String schoolName = resultSet.getString("school_name");
+            String field = resultSet.getString("field");
+            float grade = resultSet.getFloat("grade");
+            Date startDate = resultSet.getDate("start_date");
+            Date endDate = resultSet.getDate("end_date");
+            String community = resultSet.getString("community");
+            String description = resultSet.getString("description");
+            Education education = new Education(id, email, schoolName, field, grade, startDate, endDate, community, description);
+            educations.add(education);
+        }
+
+        return educations;
+    }
+
+    public List<Education> getEducationBySchoolName(String schoolName) throws SQLException {
+        String query = "SELECT * FROM education WHERE school_name = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, schoolName);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Education> educations = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String email = resultSet.getString("email");
+            String field = resultSet.getString("field");
+            float grade = resultSet.getFloat("grade");
+            Date startDate = resultSet.getDate("start_date");
+            Date endDate = resultSet.getDate("end_date");
+            String community = resultSet.getString("community");
+            String description = resultSet.getString("description");
+            Education education = new Education(id, email, schoolName, field, grade, startDate, endDate, community, description);
+            educations.add(education);
+        }
+
+        return educations;
+    }
+
+    public List<Education> getEducationByField(String field) throws SQLException {
+        String query = "SELECT * FROM education WHERE field = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, field);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Education> educations = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String email = resultSet.getString("email");
+            String schoolName = resultSet.getString("school_name");
+            float grade = resultSet.getFloat("grade");
+            Date startDate = resultSet.getDate("start_date");
+            Date endDate = resultSet.getDate("end_date");
+            String community = resultSet.getString("community");
+            String description = resultSet.getString("description");
+            Education education = new Education(id, email, schoolName, field, grade, startDate, endDate, community, description);
+            educations.add(education);
+        }
+
+        return educations;
+    }
+
+    public List<Education> getEducationByCommunity(String community) throws SQLException {
+        String query = "SELECT * FROM education WHERE community = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, community);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Education> educations = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String email = resultSet.getString("email");
+            String schoolName = resultSet.getString("school_name");
+            String field = resultSet.getString("field");
+            float grade = resultSet.getFloat("grade");
+            Date startDate = resultSet.getDate("start_date");
+            Date endDate = resultSet.getDate("end_date");
+            String description = resultSet.getString("description");
+            Education education = new Education(id, email, schoolName, field, grade, startDate, endDate, community, description);
+            educations.add(education);
+        }
+
+        return educations;
+    }
+
 }

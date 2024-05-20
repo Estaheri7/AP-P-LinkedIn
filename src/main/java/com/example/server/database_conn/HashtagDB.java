@@ -3,8 +3,11 @@ package com.example.server.database_conn;
 import com.example.server.models.Hashtag;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HashtagDB extends BaseDB {
 
@@ -52,5 +55,20 @@ public class HashtagDB extends BaseDB {
         String query = "DELETE FROM hashtags";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
+    }
+
+    public List<String> getHashtag(int postId) throws SQLException {
+        String query = "SELECT hashtag FROM hashtags WHERE post_id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, postId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<String> hashtags = new ArrayList<>();
+        while (((ResultSet) resultSet).next()) {
+            String hashtag = resultSet.getString("hashtag");
+            hashtags.add(hashtag);
+        }
+
+        return hashtags;
     }
 }

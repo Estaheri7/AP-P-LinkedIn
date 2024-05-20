@@ -17,6 +17,16 @@ public class Contact {
         this.phoneNumber = phoneNumber;
     }
 
+    public Contact(int id, String email, String viewLink, String phoneNumber, String address, Date birthDate, String fastConnect) {
+        this.id = id;
+        this.email = email;
+        this.viewLink = viewLink;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.birthDate = birthDate;
+        this.fastConnect = fastConnect;
+    }
+
     public int getId() {
         return id;
     }

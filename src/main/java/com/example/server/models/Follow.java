@@ -10,6 +10,12 @@ public class Follow {
         this.followed = followed;
     }
 
+    public Follow(int id, String follower, String followed) {
+        this.id = id;
+        this.follower = follower;
+        this.followed = followed;
+    }
+
     public int getId() {
         return id;
     }

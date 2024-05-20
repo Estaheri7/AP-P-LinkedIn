@@ -3,8 +3,11 @@ package com.example.server.database_conn;
 import com.example.server.models.Follow;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FollowDB extends BaseDB {
 
@@ -46,4 +49,39 @@ public class FollowDB extends BaseDB {
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
     }
+
+    public List<Follow> getFollow(String follower) throws SQLException {
+        String query = "SELECT * FROM follows WHERE follower = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, follower);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Follow> followers = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String followed = resultSet.getString("followed");
+            Follow follow = new Follow(id ,follower, followed);
+            followers.add(follow);
+        }
+
+        return followers;
+    }
+
+    public List<Follow> getFollowed(String followed) throws SQLException {
+        String query = "SELECT * FROM follows WHERE followed = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, followed);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Follow> followeds = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String follower = resultSet.getString("follower");
+            Follow follow = new Follow(id ,follower, followed);
+            followeds.add(follow);
+        }
+
+        return followeds;
+    }
+
 }

@@ -2,9 +2,9 @@ package com.example.server.database_conn;
 
 import com.example.server.models.Like;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LikeDB extends BaseDB {
 
@@ -47,4 +47,45 @@ public class LikeDB extends BaseDB {
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
     }
+
+    public List<Like> getLikes(int postId) throws SQLException {
+        String query = "SELECT * FROM likes WHERE post_id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, postId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Like> likes = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String email = resultSet.getString("email");
+            Timestamp likeTime = resultSet.getTimestamp("like_time");
+
+            likes.add(new Like(id, postId, email, likeTime));
+        }
+
+        return likes;
+    }
+
+
+    public List<Like> getLike(String email) throws SQLException {
+        String query = "SELECT * FROM likes WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Like> likes = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            int postId = resultSet.getInt("post_id");
+            Timestamp likeTime = resultSet.getTimestamp("like_time");
+
+            likes.add(new Like(id, postId, email, likeTime));
+        }
+
+        return likes;
+    }
 }
+
+
+
+

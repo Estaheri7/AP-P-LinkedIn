@@ -3,6 +3,7 @@ package com.example.server.database_conn;
 import com.example.server.models.Skill;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -64,5 +65,24 @@ public class SkillDB extends BaseDB {
         String query = "DELETE FROM skills";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
+    }
+
+    public Skill getSkill(String email) throws SQLException {
+        String query = "SELECT * FROM skills WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        if (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String skill1 = resultSet.getString("skill_1");
+            String skill2 = resultSet.getString("skill_2");
+            String skill3 = resultSet.getString("skill_3");
+            String skill4 = resultSet.getString("skill_4");
+            String skill5 = resultSet.getString("skill_5");
+
+            return new Skill(id, email, skill1, skill2, skill3, skill4, skill5);
+        }
+        return null;
     }
 }

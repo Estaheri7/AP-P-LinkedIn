@@ -1,11 +1,11 @@
 package com.example.server.database_conn;
 
 import com.example.server.models.Contact;
+import com.example.server.models.Education;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContactDB extends BaseDB {
 
@@ -68,4 +68,26 @@ public class ContactDB extends BaseDB {
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
     }
+
+    public List<Contact> getContact(String email) throws SQLException {
+        String query = "SELECT * FROM contact WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Contact> contacts = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String viewLink = resultSet.getString("view_link");
+            String phoneNumber = resultSet.getString("phone_number");
+            String address = resultSet.getString("address");
+            Date birthDate = resultSet.getDate("birth_date");
+            String fastConnect = resultSet.getString("fast_connect");
+            Contact contact = new Contact(id, email, viewLink, phoneNumber, address, birthDate, fastConnect);
+            contacts.add(contact);
+        }
+
+        return contacts;
+    }
+
 }

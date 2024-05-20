@@ -1,15 +1,26 @@
 package com.example.server.models;
 
+import java.sql.Timestamp;
+
 public class Comment {
     private int id;
     private int postId;
     private String email;
     private String comment;
+    private Timestamp commentDate;
 
     public Comment(int postId, String email, String comment) {
         this.postId = postId;
         this.email = email;
         this.comment = comment;
+    }
+
+    public Comment(int id, int postId, String email, String comment, Timestamp commentDate ) {
+        this.id = id;
+        this.postId = postId;
+        this.email = email;
+        this.comment = comment;
+        this.commentDate = commentDate;
     }
 
     public int getId() {
@@ -42,5 +53,13 @@ public class Comment {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Timestamp getCommentDate() {
+        return commentDate;
+    }
+
+    public void setCommentDate(Timestamp commentDate) {
+        this.commentDate = commentDate;
     }
 }
