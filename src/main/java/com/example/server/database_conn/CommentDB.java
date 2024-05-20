@@ -2,9 +2,9 @@ package com.example.server.database_conn;
 
 import com.example.server.models.Comment;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommentDB extends BaseDB {
 
@@ -56,4 +56,44 @@ public class CommentDB extends BaseDB {
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
     }
+
+    public List<Comment> getCommentsByPostId(int postId) throws SQLException {
+        String query = "SELECT * FROM comments WHERE post_id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, postId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Comment> comments = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String email = resultSet.getString("email");
+            Timestamp commentDate = resultSet.getTimestamp("comment_date");
+            String message = resultSet.getString("message");
+            Comment comment = new Comment(id, postId, email, message, commentDate);
+            comments.add(comment);
+        }
+
+        return comments;
+    }
+
+    public List<Comment> getCommentsByEmail(String email) throws SQLException {
+        String query = "SELECT * FROM comments WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Comment> comments = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            int postId = resultSet.getInt("post_id");
+            Timestamp commentDate = resultSet.getTimestamp("comment_date");
+            String message = resultSet.getString("message");
+            Comment comment = new Comment(id, postId, email, commentDate, message);
+            comments.add(comment);
+        }
+
+        return comments;
+    }
+
+
 }
