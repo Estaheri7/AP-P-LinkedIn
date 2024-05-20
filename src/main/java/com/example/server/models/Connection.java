@@ -4,15 +4,17 @@ public class Connection {
     private int id;
     private String sender;
     private String receiver;
+    private boolean commited;
 
     public Connection(String sender, String receiver) {
         this.sender = sender;
         this.receiver = receiver;
     }
-    public Connection(int id ,String sender, String receiver) {
+    public Connection(int id ,String sender, String receiver , boolean commited) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
+        this.commited = commited;
     }
 
     public int getId() {
@@ -37,5 +39,13 @@ public class Connection {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    public boolean isCommited() {
+        return commited;
+    }
+
+    public void setCommited(boolean commited) {
+        this.commited = commited;
     }
 }
