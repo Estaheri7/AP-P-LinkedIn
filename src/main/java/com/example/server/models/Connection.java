@@ -9,6 +9,11 @@ public class Connection {
         this.sender = sender;
         this.receiver = receiver;
     }
+    public Connection(int id ,String sender, String receiver) {
+        this.id = id;
+        this.sender = sender;
+        this.receiver = receiver;
+    }
 
     public int getId() {
         return id;
