@@ -3,8 +3,11 @@ package com.example.server.database_conn;
 import com.example.server.models.Connection;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionDB extends BaseDB {
 
@@ -47,4 +50,41 @@ public class ConnectionDB extends BaseDB {
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
     }
+
+    public List<Connection> getConnectionsBySender(String sender) throws SQLException {
+        String query = "SELECT * FROM connections WHERE sender = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, sender);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Connection> connections = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String receiver = resultSet.getString("receiver");
+            boolean commited = resultSet.getBoolean("commited");
+            Connection connection = new Connection(id, sender, receiver, commited);
+            connections.add(connection);
+        }
+
+        return connections;
+    }
+
+    public List<Connection> getConnectionsByReceiver(String receiver) throws SQLException {
+        String query = "SELECT * FROM connections WHERE receiver = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, receiver);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        List<Connection> connections = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String sender = resultSet.getString("sender");
+            boolean commited = resultSet.getBoolean("commited");
+            Connection connection = new Connection(id, sender, receiver, commited);
+            connections.add(connection);
+        }
+
+        return connections;
+    }
+
 }
