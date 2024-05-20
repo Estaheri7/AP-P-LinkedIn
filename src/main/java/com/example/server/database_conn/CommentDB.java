@@ -88,7 +88,7 @@ public class CommentDB extends BaseDB {
             int postId = resultSet.getInt("post_id");
             Timestamp commentDate = resultSet.getTimestamp("comment_date");
             String message = resultSet.getString("message");
-            Comment comment = new Comment(id, postId, email, commentDate, message);
+            Comment comment = new Comment(id, postId, email, message, commentDate);
             comments.add(comment);
         }
 
