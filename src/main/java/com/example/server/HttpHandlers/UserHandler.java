@@ -1,6 +1,7 @@
 package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.UserController;
+import com.example.server.models.Contact;
 import com.example.server.models.Education;
 import com.example.server.models.Skill;
 import com.example.server.models.User;
@@ -97,8 +98,13 @@ public class UserHandler {
         String response;
         try {
             Skill skill = UserController.getSkill(email);
-            response = gson.toJson(skill);
-            exchange.sendResponseHeaders(200, response.getBytes().length);
+            if (skill == null) {
+                response = "User not found";
+                exchange.sendResponseHeaders(404, response.getBytes().length);
+            } else {
+                response = gson.toJson(skill);
+                exchange.sendResponseHeaders(200, response.getBytes().length);
+            }
         } catch (SQLException e) {
             response = "Database error: " + e.getMessage();
             exchange.sendResponseHeaders(500, response.getBytes().length);
@@ -120,8 +126,64 @@ public class UserHandler {
         String response;
         try {
             Education education = UserController.getEducation(email);
-            response = gson.toJson(education);
+            if (education == null) {
+                response = "User not found";
+                exchange.sendResponseHeaders(404, response.getBytes().length);
+            } else {
+                response = gson.toJson(education);
+                exchange.sendResponseHeaders(200, response.getBytes().length);
+            }
+        } catch (SQLException e) {
+            response = "Database error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        } catch (Exception e) {
+            response = "Internal server error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        }
+
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    public static void getAllEducationHandler(HttpExchange exchange) throws IOException {
+        String path = exchange.getRequestURI().getPath();
+        String[] segments = path.split("/");
+        String email = segments[segments.length - 1];
+
+        String response;
+        try {
+            ArrayList<Education> educations = UserController.getAllEducations(email);
+            response = gson.toJson(educations);
             exchange.sendResponseHeaders(200, response.getBytes().length);
+        } catch (SQLException e) {
+            response = "Database error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        } catch (Exception e) {
+            response = "Internal server error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        }
+
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    public static void getContactHandler(HttpExchange exchange) throws IOException {
+        String path = exchange.getRequestURI().getPath();
+        String[] segments = path.split("/");
+        String email = segments[segments.length - 1];
+
+        String response;
+        try {
+            Contact contact = UserController.getContact(email);
+            if (contact == null) {
+                response = "User not found";
+                exchange.sendResponseHeaders(404, response.getBytes().length);
+            } else {
+                response = gson.toJson(contact);
+                exchange.sendResponseHeaders(200, response.getBytes().length);
+            }
         } catch (SQLException e) {
             response = "Database error: " + e.getMessage();
             exchange.sendResponseHeaders(500, response.getBytes().length);
