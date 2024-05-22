@@ -69,25 +69,24 @@ public class ContactDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
-    public List<Contact> getContact(String email) throws SQLException {
+    public Contact getContact(String email) throws SQLException {
         String query = "SELECT * FROM contact WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Contact> contacts = new ArrayList<>();
-        while (resultSet.next()) {
+        if (resultSet.next()) {
             int id = resultSet.getInt("id");
             String viewLink = resultSet.getString("view_link");
             String phoneNumber = resultSet.getString("phone_number");
             String address = resultSet.getString("address");
             Date birthDate = resultSet.getDate("birth_date");
             String fastConnect = resultSet.getString("fast_connect");
-            Contact contact = new Contact(id, email, viewLink, phoneNumber, address, birthDate, fastConnect);
-            contacts.add(contact);
+
+            return new Contact(id, email, viewLink, phoneNumber, address, birthDate, fastConnect);
         }
 
-        return contacts;
+        return null;
     }
 
 }
