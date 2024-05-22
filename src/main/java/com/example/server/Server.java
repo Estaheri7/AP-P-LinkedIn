@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class Server {
                 exchange.setAttribute("queryParams", params);
                 handler.handle(exchange);
             } else {
-                // TO-DO bad request error
+                this.handleMethodNotAllowed(exchange);
             }
         });
     }
@@ -49,7 +50,7 @@ public class Server {
                 exchange.setAttribute("queryParams", params);
                 handler.handle(exchange);
             } else {
-                // TO-DO bad request error
+                this.handleMethodNotAllowed(exchange);
             }
         });
     }
@@ -61,7 +62,7 @@ public class Server {
                 exchange.setAttribute("queryParams", params);
                 handler.handle(exchange);
             } else {
-                // TO-DO bad request error
+                this.handleMethodNotAllowed(exchange);
             }
         });
     }
@@ -73,7 +74,7 @@ public class Server {
                 exchange.setAttribute("queryParams", params);
                 handler.handle(exchange);
             } else {
-                // TO-DO bad request error
+                this.handleMethodNotAllowed(exchange);
             }
         });
     }
@@ -90,5 +91,13 @@ public class Server {
         }
 
         return queryParams;
+    }
+
+    private void handleMethodNotAllowed(HttpExchange exchange) throws IOException {
+        String response = "Method not allowed";
+        exchange.sendResponseHeaders(405, response.getBytes().length);
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
     }
 }
