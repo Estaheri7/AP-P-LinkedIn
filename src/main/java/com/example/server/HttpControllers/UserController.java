@@ -12,6 +12,7 @@ import com.example.server.models.User;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserController {
     private static final UserDB userDB;
@@ -55,5 +56,13 @@ public class UserController {
 
     public static Education getEducation(String email) throws SQLException {
         return educationDB.getEducation(email);
+    }
+
+    public static ArrayList<Education> getAllEducations(String email) throws SQLException  {
+        return educationDB.getAllEducations(email);
+    }
+
+    public static Contact getContact(String email) throws SQLException {
+        return contactDB.getContact(email);
     }
 }
