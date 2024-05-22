@@ -1,7 +1,11 @@
 package com.example.server.HttpControllers;
 
 import com.example.server.DataValidator.UserValidator;
+import com.example.server.database_conn.EducationDB;
+import com.example.server.database_conn.SkillDB;
 import com.example.server.database_conn.UserDB;
+import com.example.server.models.Education;
+import com.example.server.models.Skill;
 import com.example.server.models.User;
 
 import java.sql.SQLException;
@@ -9,10 +13,14 @@ import java.util.ArrayList;
 
 public class UserController {
     private static final UserDB userDB;
+    private static final SkillDB skillDB;
+    private static final EducationDB educationDB;
 
     static {
         try {
             userDB = new UserDB();
+            skillDB = new SkillDB();
+            educationDB = new EducationDB();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -32,5 +40,13 @@ public class UserController {
 
     public static ArrayList<User> getAllUsers() throws SQLException  {
         return userDB.getAllUsers();
+    }
+
+    public static Skill getSkill(String email) throws SQLException {
+        return skillDB.getSkill(email);
+    }
+
+    public static Education getEducation(String email) throws SQLException {
+        return educationDB.getEducation(email);
     }
 }

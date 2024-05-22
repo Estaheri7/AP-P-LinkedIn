@@ -5,6 +5,8 @@ import com.example.server.Server;
 
 public class Router {
     public static void route(Server server) {
-        server.post("/signup", UserHandler::userPostHandler);
+        server.get("/user", UserHandler::getUserHandler);
+        server.get("/users", UserHandler::getAllUserHandler);
+        server.post("/signup", UserHandler::postUserHandler);
     }
 }
