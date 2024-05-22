@@ -1,5 +1,6 @@
 package com.example.server;
 
+import com.example.server.Router.Router;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -19,6 +20,8 @@ public class Server {
     private void createServer(int port) throws IOException {
         InetAddress localAddress = InetAddress.getByName("127.0.0.1");
         this.server = HttpServer.create(new InetSocketAddress(localAddress, port), 0);
+
+        Router.route(this);
 
         server.start();
     }
