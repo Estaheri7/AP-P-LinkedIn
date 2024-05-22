@@ -17,7 +17,7 @@ public class EducationDB extends BaseDB {
     public void createTable() throws SQLException {
         String query = "CREATE TABLE IF NOT EXISTS education ("
                 + "id INT AUTO_INCREMENT PRIMARY KEY,"
-                + "email VARCHAR(255) UNIQUE NOT NULL,"
+                + "email VARCHAR(255) NOT NULL,"
                 + "school_name VARCHAR(40) NOT NULL,"
                 + "field VARCHAR(40) NOT NULL,"
                 + "grade FLOAT NOT NULL,"
@@ -50,7 +50,7 @@ public class EducationDB extends BaseDB {
     public void updateData(Education education) throws SQLException {
         String query = "UPDATE education "
                 + "SET school_name = ?, field = ?, grade = ?, start_date = ?, end_date = ?, community = ?, description = ?"
-                + "WHERE email = ?";
+                + "WHERE id = ?";
 
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, education.getSchoolName());
@@ -77,7 +77,7 @@ public class EducationDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
     public Education getEducation(String email) throws SQLException {
-        String query = "SELECT * FROM education WHERE email = ?";
+        String query = "SELECT * FROM education WHERE email = ? ORDER BY id DESC LIMIT 1;";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
 
@@ -98,13 +98,36 @@ public class EducationDB extends BaseDB {
         return null;
     }
 
-    public List<Education> getEducationBySchoolName(String schoolName) throws SQLException {
+    public ArrayList<Education> getAllEducations(String email) throws SQLException {
+        String query = "SELECT * FROM education WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        ArrayList<Education> educations = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String schoolName = resultSet.getString("school_name");
+            String field = resultSet.getString("field");
+            double grade = resultSet.getDouble("grade");
+            Date startDate = resultSet.getDate("start_date");
+            Date endDate = resultSet.getDate("end_date");
+            String community = resultSet.getString("community");
+            String description = resultSet.getString("description");
+
+            Education education = new Education(id, email, schoolName, field, grade, startDate, endDate, community, description);
+            educations.add(education);
+        }
+
+        return educations;
+    }
+
+    public ArrayList<Education> getEducationBySchoolName(String schoolName) throws SQLException {
         String query = "SELECT * FROM education WHERE school_name = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, schoolName);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Education> educations = new ArrayList<>();
+        ArrayList<Education> educations = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String email = resultSet.getString("email");
@@ -121,13 +144,13 @@ public class EducationDB extends BaseDB {
         return educations;
     }
 
-    public List<Education> getEducationByField(String field) throws SQLException {
+    public ArrayList<Education> getEducationByField(String field) throws SQLException {
         String query = "SELECT * FROM education WHERE field = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, field);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Education> educations = new ArrayList<>();
+        ArrayList<Education> educations = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String email = resultSet.getString("email");
@@ -144,13 +167,13 @@ public class EducationDB extends BaseDB {
         return educations;
     }
 
-    public List<Education> getEducationByCommunity(String community) throws SQLException {
+    public ArrayList<Education> getEducationByCommunity(String community) throws SQLException {
         String query = "SELECT * FROM education WHERE community = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, community);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Education> educations = new ArrayList<>();
+        ArrayList<Education> educations = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String email = resultSet.getString("email");
