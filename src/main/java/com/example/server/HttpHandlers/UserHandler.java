@@ -1,6 +1,8 @@
 package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.UserController;
+import com.example.server.models.Education;
+import com.example.server.models.Skill;
 import com.example.server.models.User;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
@@ -73,6 +75,52 @@ public class UserHandler {
         try {
             ArrayList<User> users = UserController.getAllUsers();
             response = gson.toJson(users);
+            exchange.sendResponseHeaders(200, response.getBytes().length);
+        } catch (SQLException e) {
+            response = "Database error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        } catch (Exception e) {
+            response = "Internal server error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        }
+
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    public static void getSkillHandler(HttpExchange exchange) throws IOException {
+        String path = exchange.getRequestURI().getPath();
+        String[] segments = path.split("/");
+        String email = segments[segments.length - 1];
+
+        String response;
+        try {
+            Skill skill = UserController.getSkill(email);
+            response = gson.toJson(skill);
+            exchange.sendResponseHeaders(200, response.getBytes().length);
+        } catch (SQLException e) {
+            response = "Database error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        } catch (Exception e) {
+            response = "Internal server error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        }
+
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    public static void getEducationHandler(HttpExchange exchange) throws IOException {
+        String path = exchange.getRequestURI().getPath();
+        String[] segments = path.split("/");
+        String email = segments[segments.length - 1];
+
+        String response;
+        try {
+            Education education = UserController.getEducation(email);
+            response = gson.toJson(education);
             exchange.sendResponseHeaders(200, response.getBytes().length);
         } catch (SQLException e) {
             response = "Database error: " + e.getMessage();
