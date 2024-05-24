@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.example.server.Server.extractEmailFromPath;
+
 public class UserHandler {
     private static final Gson gson = new Gson();
 
@@ -185,10 +187,5 @@ public class UserHandler {
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
-    }
-
-    private static String extractEmailFromPath(String path) {
-        String[] segments = path.split("/");
-        return segments[segments.length - 1];
     }
 }
