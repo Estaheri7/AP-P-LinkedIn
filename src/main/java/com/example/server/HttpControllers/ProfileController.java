@@ -7,12 +7,10 @@ import com.example.server.database_conn.ContactDB;
 import com.example.server.database_conn.EducationDB;
 import com.example.server.database_conn.SkillDB;
 import com.example.server.database_conn.UserDB;
-import com.example.server.models.Contact;
-import com.example.server.models.Education;
-import com.example.server.models.Skill;
-import com.example.server.models.User;
+import com.example.server.models.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ProfileController {
     private static final UserDB userDB;
@@ -29,6 +27,19 @@ public class ProfileController {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static UserProfile getProfile(String email) throws SQLException {
+        User user = userDB.getUser(email);
+        if (user == null) {
+            return null;
+        }
+
+        Skill skill = skillDB.getSkill(email);
+        Contact contact = contactDB.getContact(email);
+        ArrayList<Education> educations = educationDB.getAllEducations(email);
+
+        return new UserProfile(user, skill, contact, educations);
     }
 
     public static void updateUser(User user) throws SQLException {
