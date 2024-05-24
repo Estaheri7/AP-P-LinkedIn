@@ -41,6 +41,14 @@ public class ProfileController {
         skillDB.updateData(skill);
     }
 
+    public static void addEducation(Education education) throws SQLException {
+        if (!EducationValidator.isValid(education)) {
+            throw new IllegalArgumentException("School name or Field cannot be empty");
+        }
+
+        educationDB.insertData(education);
+    }
+
     public static void updateEducation(Education education) throws SQLException {
         if (!EducationValidator.isValid(education)) {
             throw new IllegalArgumentException("School name or Field cannot be empty");
