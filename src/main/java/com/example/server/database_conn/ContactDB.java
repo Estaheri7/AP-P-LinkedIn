@@ -44,13 +44,17 @@ public class ContactDB extends BaseDB {
     }
 
     public void updateData(Contact contact) throws SQLException {
-        String query = "UPDATE contact"
+        String query = "UPDATE contact "
                 + "SET view_link = ?, phone_number = ?, address = ?, birth_date = ?, fast_connect = ? WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, contact.getViewLink());
         preparedStatement.setString(2, contact.getPhoneNumber());
         preparedStatement.setString(3, contact.getAddress());
-        preparedStatement.setDate(4, (Date) contact.getBirthDate());
+        if (contact.getBirthDate() != null) {
+            preparedStatement.setDate(4, new java.sql.Date(contact.getBirthDate().getTime()));
+        } else {
+            preparedStatement.setDate(4, null);
+        }
         preparedStatement.setString(5, contact.getFastConnect());
         preparedStatement.setString(6, contact.getEmail());
         preparedStatement.executeUpdate();
