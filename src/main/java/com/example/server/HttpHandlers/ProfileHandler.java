@@ -2,10 +2,7 @@ package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.ProfileController;
 import com.example.server.HttpControllers.UserController;
-import com.example.server.models.Contact;
-import com.example.server.models.Education;
-import com.example.server.models.Skill;
-import com.example.server.models.User;
+import com.example.server.models.*;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -17,6 +14,32 @@ import static com.example.server.Server.extractEmailFromPath;
 
 public class ProfileHandler {
     private static final Gson gson = new Gson();
+
+    public static void getProfileHandler(HttpExchange exchange) throws IOException {
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        String response;
+        try {
+            UserProfile userProfile = ProfileController.getProfile(email);
+            if (userProfile != null) {
+                response = gson.toJson(userProfile);
+                exchange.sendResponseHeaders(200, response.getBytes().length);
+            } else {
+                response = "User not found";
+                exchange.sendResponseHeaders(404, response.getBytes().length);
+            }
+        } catch (SQLException e) {
+            response = "Database error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        } catch (Exception e) {
+            response = "Internal server error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        }
+
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
 
     public static void userUpdateHandler(HttpExchange exchange) throws IOException {
         String email = extractEmailFromPath(exchange.getRequestURI().getPath());
