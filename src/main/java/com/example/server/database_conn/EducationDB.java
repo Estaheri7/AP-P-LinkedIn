@@ -40,8 +40,16 @@ public class EducationDB extends BaseDB {
         preparedStatement.setString(2, education.getSchoolName());
         preparedStatement.setString(3, education.getField());
         preparedStatement.setDouble(4, education.getGrade());
-        preparedStatement.setDate(5, (Date) education.getStartDate());
-        preparedStatement.setDate(6, (Date) education.getEndDate());
+        if (education.getStartDate() != null) {
+            preparedStatement.setDate(5, new java.sql.Date(education.getStartDate().getTime()));
+        } else {
+            preparedStatement.setDate(5, null);
+        }
+        if (education.getEndDate() != null) {
+            preparedStatement.setDate(6, new java.sql.Date(education.getEndDate().getTime()));
+        } else {
+            preparedStatement.setDate(6, null);
+        }
         preparedStatement.setString(7, education.getCommunity());
         preparedStatement.setString(8, education.getDescription());
         preparedStatement.executeUpdate();
@@ -49,18 +57,26 @@ public class EducationDB extends BaseDB {
 
     public void updateData(Education education) throws SQLException {
         String query = "UPDATE education "
-                + "SET school_name = ?, field = ?, grade = ?, start_date = ?, end_date = ?, community = ?, description = ?"
+                + "SET school_name = ?, field = ?, grade = ?, start_date = ?, end_date = ?, community = ?, description = ? "
                 + "WHERE id = ?";
 
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, education.getSchoolName());
         preparedStatement.setString(2, education.getField());
         preparedStatement.setDouble(3, education.getGrade());
-        preparedStatement.setDate(4, (Date) education.getStartDate());
-        preparedStatement.setDate(5, (Date) education.getEndDate());
+        if (education.getStartDate() != null) {
+            preparedStatement.setDate(4, new java.sql.Date(education.getStartDate().getTime()));
+        } else {
+            preparedStatement.setDate(4, null);
+        }
+        if (education.getEndDate() != null) {
+            preparedStatement.setDate(5, new java.sql.Date(education.getEndDate().getTime()));
+        } else {
+            preparedStatement.setDate(5, null);
+        }
         preparedStatement.setString(6, education.getCommunity());
         preparedStatement.setString(7, education.getDescription());
-        preparedStatement.setString(8, education.getEmail());
+        preparedStatement.setInt(8, education.getId());
         preparedStatement.executeUpdate();
     }
 

@@ -52,20 +52,19 @@ public class UserDB extends BaseDB {
     }
 
     public void updateData(User user) throws SQLException {
-        String query = "UPDATE users SET email = ?, password = ?, name = ?, lastName = ?, additionalName = ?, avatar_url = ?, background_url = ?, headline = ?, country = ?, city = ? WHERE id = ?";
+        String query = "UPDATE users SET password = ?, name = ?, lastName = ?, additionalName = ?, avatar_url = ?, background_url = ?, headline = ?, country = ?, city = ? WHERE email = ?";
 
         PreparedStatement preparedStatement = conn.prepareStatement(query);
-        preparedStatement.setString(1, user.getEmail());
-        preparedStatement.setString(2, user.getPassword());
-        preparedStatement.setString(3, user.getFirstName());
-        preparedStatement.setString(4, user.getLastName());
-        preparedStatement.setString(5, user.getAdditionalName());
-        preparedStatement.setString(6, user.getAvatar_url());
-        preparedStatement.setString(7, user.getBackground_url());
-        preparedStatement.setString(8, user.getHeadline());
-        preparedStatement.setString(9, user.getCountry());
-        preparedStatement.setString(10, user.getCity());
-        preparedStatement.setInt(11, user.getId());
+        preparedStatement.setString(1, user.getPassword());
+        preparedStatement.setString(2, user.getFirstName());
+        preparedStatement.setString(3, user.getLastName());
+        preparedStatement.setString(4, user.getAdditionalName());
+        preparedStatement.setString(5, user.getAvatar_url());
+        preparedStatement.setString(6, user.getBackground_url());
+        preparedStatement.setString(7, user.getHeadline());
+        preparedStatement.setString(8, user.getCountry());
+        preparedStatement.setString(9, user.getCity());
+        preparedStatement.setString(10, user.getEmail());
         preparedStatement.executeUpdate();
     }
 
