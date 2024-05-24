@@ -1,6 +1,8 @@
 package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.ProfileController;
+import com.example.server.HttpControllers.UserController;
+import com.example.server.models.Education;
 import com.example.server.models.Skill;
 import com.example.server.models.User;
 import com.google.gson.Gson;
@@ -27,7 +29,7 @@ public class ProfileHandler {
             ProfileController.updateUser(user);
             response = "Profile updated successfully";
             exchange.sendResponseHeaders(200, response.getBytes().length);
-        }  catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             response = e.getMessage();
             exchange.sendResponseHeaders(400, response.getBytes().length);
         } catch (SQLException e) {
@@ -55,6 +57,35 @@ public class ProfileHandler {
             ProfileController.updateSkill(skill);
             response = "Skill updated successfully";
             exchange.sendResponseHeaders(200, response.getBytes().length);
+        } catch (SQLException e) {
+            response = "Database error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        } catch (Exception e) {
+            response = "Internal server error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        }
+
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    public static void educationUpdateHandler(HttpExchange exchange) throws IOException {
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        String requestBody = new String(exchange.getRequestBody().readAllBytes());
+        Education education = gson.fromJson(requestBody, Education.class);
+
+        String response;
+        try {
+            Education currentEducation = UserController.getEducation(email);
+            education.setId(currentEducation.getId());
+            ProfileController.updateEducation(education);
+            response = "Education updated successfully";
+            exchange.sendResponseHeaders(200, response.getBytes().length);
+        } catch (IllegalArgumentException e) {
+            response = e.getMessage();
+            exchange.sendResponseHeaders(400, response.getBytes().length);
         } catch (SQLException e) {
             response = "Database error: " + e.getMessage();
             exchange.sendResponseHeaders(500, response.getBytes().length);
