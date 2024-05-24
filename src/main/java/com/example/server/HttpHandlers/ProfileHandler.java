@@ -1,6 +1,7 @@
 package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.ProfileController;
+import com.example.server.models.Skill;
 import com.example.server.models.User;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
@@ -29,6 +30,31 @@ public class ProfileHandler {
         }  catch (IllegalArgumentException e) {
             response = e.getMessage();
             exchange.sendResponseHeaders(400, response.getBytes().length);
+        } catch (SQLException e) {
+            response = "Database error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        } catch (Exception e) {
+            response = "Internal server error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        }
+
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    public static void skillUpdateHandler(HttpExchange exchange) throws IOException {
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        String requestBody = new String(exchange.getRequestBody().readAllBytes());
+        Skill skill = gson.fromJson(requestBody, Skill.class);
+        skill.setEmail(email);
+
+        String response;
+        try {
+            ProfileController.updateSkill(skill);
+            response = "Skill updated successfully";
+            exchange.sendResponseHeaders(200, response.getBytes().length);
         } catch (SQLException e) {
             response = "Database error: " + e.getMessage();
             exchange.sendResponseHeaders(500, response.getBytes().length);
