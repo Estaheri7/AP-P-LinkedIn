@@ -44,9 +44,7 @@ public class UserHandler {
     }
 
     public static void getUserHandler(HttpExchange exchange) throws IOException {
-        String path = exchange.getRequestURI().getPath();
-        String[] segments = path.split("/");
-        String email = segments[segments.length - 1];
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
 
         String response;
         try {
@@ -91,9 +89,7 @@ public class UserHandler {
     }
 
     public static void getSkillHandler(HttpExchange exchange) throws IOException {
-        String path = exchange.getRequestURI().getPath();
-        String[] segments = path.split("/");
-        String email = segments[segments.length - 1];
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
 
         String response;
         try {
@@ -119,9 +115,7 @@ public class UserHandler {
     }
 
     public static void getEducationHandler(HttpExchange exchange) throws IOException {
-        String path = exchange.getRequestURI().getPath();
-        String[] segments = path.split("/");
-        String email = segments[segments.length - 1];
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
 
         String response;
         try {
@@ -147,9 +141,7 @@ public class UserHandler {
     }
 
     public static void getAllEducationHandler(HttpExchange exchange) throws IOException {
-        String path = exchange.getRequestURI().getPath();
-        String[] segments = path.split("/");
-        String email = segments[segments.length - 1];
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
 
         String response;
         try {
@@ -170,9 +162,7 @@ public class UserHandler {
     }
 
     public static void getContactHandler(HttpExchange exchange) throws IOException {
-        String path = exchange.getRequestURI().getPath();
-        String[] segments = path.split("/");
-        String email = segments[segments.length - 1];
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
 
         String response;
         try {
@@ -195,5 +185,10 @@ public class UserHandler {
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
+    }
+
+    private static String extractEmailFromPath(String path) {
+        String[] segments = path.split("/");
+        return segments[segments.length - 1];
     }
 }
