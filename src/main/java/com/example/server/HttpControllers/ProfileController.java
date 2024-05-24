@@ -5,6 +5,7 @@ import com.example.server.database_conn.ContactDB;
 import com.example.server.database_conn.EducationDB;
 import com.example.server.database_conn.SkillDB;
 import com.example.server.database_conn.UserDB;
+import com.example.server.models.Skill;
 import com.example.server.models.User;
 
 import java.sql.SQLException;
@@ -32,5 +33,9 @@ public class ProfileController {
         }
 
         userDB.updateData(user);
+    }
+
+    public static void updateSkill(Skill skill) throws SQLException {
+        skillDB.updateData(skill);
     }
 }
