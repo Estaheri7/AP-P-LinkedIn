@@ -2,6 +2,7 @@ package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.ProfileController;
 import com.example.server.HttpControllers.UserController;
+import com.example.server.models.Contact;
 import com.example.server.models.Education;
 import com.example.server.models.Skill;
 import com.example.server.models.User;
@@ -110,6 +111,34 @@ public class ProfileHandler {
             education.setId(currentEducation.getId());
             ProfileController.updateEducation(education);
             response = "Education updated successfully";
+            exchange.sendResponseHeaders(200, response.getBytes().length);
+        } catch (IllegalArgumentException e) {
+            response = e.getMessage();
+            exchange.sendResponseHeaders(400, response.getBytes().length);
+        } catch (SQLException e) {
+            response = "Database error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        } catch (Exception e) {
+            response = "Internal server error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        }
+
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    public static void contactUpdateHandler(HttpExchange exchange) throws IOException {
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        String requestBody = new String(exchange.getRequestBody().readAllBytes());
+        Contact contact = gson.fromJson(requestBody, Contact.class);
+        contact.setEmail(email);
+
+        String response;
+        try {
+            ProfileController.updateContact(contact);
+            response = "Contact updated successfully";
             exchange.sendResponseHeaders(200, response.getBytes().length);
         } catch (IllegalArgumentException e) {
             response = e.getMessage();
