@@ -49,7 +49,7 @@ public class EducationDB extends BaseDB {
 
     public void updateData(Education education) throws SQLException {
         String query = "UPDATE education "
-                + "SET school_name = ?, field = ?, grade = ?, start_date = ?, end_date = ?, community = ?, description = ?"
+                + "SET school_name = ?, field = ?, grade = ?, start_date = ?, end_date = ?, community = ?, description = ? "
                 + "WHERE id = ?";
 
         PreparedStatement preparedStatement = conn.prepareStatement(query);
@@ -60,7 +60,7 @@ public class EducationDB extends BaseDB {
         preparedStatement.setDate(5, (Date) education.getEndDate());
         preparedStatement.setString(6, education.getCommunity());
         preparedStatement.setString(7, education.getDescription());
-        preparedStatement.setString(8, education.getEmail());
+        preparedStatement.setInt(8, education.getId());
         preparedStatement.executeUpdate();
     }
 
