@@ -93,6 +93,11 @@ public class Server {
         return queryParams;
     }
 
+    public static String extractEmailFromPath(String path) {
+        String[] segments = path.split("/");
+        return segments[segments.length - 1];
+    }
+
     private void handleMethodNotAllowed(HttpExchange exchange) throws IOException {
         String response = "Method not allowed";
         exchange.sendResponseHeaders(405, response.getBytes().length);
