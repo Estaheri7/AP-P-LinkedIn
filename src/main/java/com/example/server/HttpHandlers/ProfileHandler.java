@@ -70,6 +70,34 @@ public class ProfileHandler {
         os.close();
     }
 
+    public static void addEducationHandler(HttpExchange exchange) throws IOException {
+        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        String requestBody = new String(exchange.getRequestBody().readAllBytes());
+        Education education = gson.fromJson(requestBody, Education.class);
+        education.setEmail(email);
+
+        String response;
+        try {
+            ProfileController.addEducation(education);
+            response = "Education added successfully";
+            exchange.sendResponseHeaders(200, response.getBytes().length);
+        } catch (IllegalArgumentException e) {
+            response = e.getMessage();
+            exchange.sendResponseHeaders(400, response.getBytes().length);
+        } catch (SQLException e) {
+            response = "Database error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        } catch (Exception e) {
+            response = "Internal server error: " + e.getMessage();
+            exchange.sendResponseHeaders(500, response.getBytes().length);
+        }
+
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
     public static void educationUpdateHandler(HttpExchange exchange) throws IOException {
         String email = extractEmailFromPath(exchange.getRequestURI().getPath());
 
