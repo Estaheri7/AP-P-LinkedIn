@@ -1,11 +1,13 @@
 package com.example.server.HttpControllers;
 
+import com.example.server.DataValidator.ContactValidator;
 import com.example.server.DataValidator.EducationValidator;
 import com.example.server.DataValidator.UserValidator;
 import com.example.server.database_conn.ContactDB;
 import com.example.server.database_conn.EducationDB;
 import com.example.server.database_conn.SkillDB;
 import com.example.server.database_conn.UserDB;
+import com.example.server.models.Contact;
 import com.example.server.models.Education;
 import com.example.server.models.Skill;
 import com.example.server.models.User;
@@ -55,5 +57,13 @@ public class ProfileController {
         }
 
         educationDB.updateData(education);
+    }
+
+    public static void updateContact(Contact contact) throws SQLException {
+        if (!ContactValidator.isValid(contact)) {
+            throw new IllegalArgumentException("view link is null or phone number is not valid");
+        }
+
+        contactDB.updateData(contact);
     }
 }
