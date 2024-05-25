@@ -12,22 +12,7 @@ import com.example.server.models.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class ProfileController {
-    private static final UserDB userDB;
-    private static final SkillDB skillDB;
-    private static final EducationDB educationDB;
-    private static final ContactDB contactDB;
-
-    static {
-        try {
-            userDB = new UserDB();
-            skillDB = new SkillDB();
-            educationDB = new EducationDB();
-            contactDB = new ContactDB();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+public class ProfileController extends BaseController {
 
     public static UserProfile getProfile(String email) throws SQLException {
         User user = userDB.getUser(email);
