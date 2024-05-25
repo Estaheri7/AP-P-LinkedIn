@@ -5,9 +5,8 @@ import com.example.server.models.User;
 import com.example.server.utils.JwtUtil;
 
 
-public class AuthController {
+public class AuthController extends BaseController {
     public static String loginUser(String email, String password) throws Exception {
-        UserDB userDB = new UserDB();
         User user = userDB.getUser(email);
 
         if (user != null && user.getPassword().equals(password)) {
