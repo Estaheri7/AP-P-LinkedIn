@@ -14,22 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserController {
-    private static final UserDB userDB;
-    private static final SkillDB skillDB;
-    private static final EducationDB educationDB;
-    private static final ContactDB contactDB;
-
-    static {
-        try {
-            userDB = new UserDB();
-            skillDB = new SkillDB();
-            educationDB = new EducationDB();
-            contactDB = new ContactDB();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+public class UserController extends BaseController {
 
     public static void addUser(User user) throws SQLException  {
         if (!UserValidator.isValid(user)) {
