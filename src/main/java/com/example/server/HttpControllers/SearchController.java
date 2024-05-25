@@ -6,16 +6,7 @@ import com.example.server.models.User;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class SearchController {
-    private static final UserDB userDB;
-
-    static {
-        try {
-            userDB = new UserDB();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+public class SearchController extends BaseController {
 
     public static ArrayList<User> getUsersByName(String name) throws SQLException {
            return userDB.getUserByName(name);
