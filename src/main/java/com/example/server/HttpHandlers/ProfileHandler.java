@@ -2,12 +2,12 @@ package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.ProfileController;
 import com.example.server.HttpControllers.UserController;
+import com.example.server.Server;
 import com.example.server.models.*;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.SQLException;
 
 import static com.example.server.Server.extractEmailFromPath;
@@ -18,27 +18,18 @@ public class ProfileHandler {
     public static void getProfileHandler(HttpExchange exchange) throws IOException {
         String email = extractEmailFromPath(exchange.getRequestURI().getPath());
 
-        String response;
         try {
             UserProfile userProfile = ProfileController.getProfile(email);
             if (userProfile != null) {
-                response = gson.toJson(userProfile);
-                exchange.sendResponseHeaders(200, response.getBytes().length);
+                Server.sendResponse(exchange, 200, gson.toJson(userProfile));
             } else {
-                response = "User not found";
-                exchange.sendResponseHeaders(404, response.getBytes().length);
+                Server.sendResponse(exchange, 404, "Not found");
             }
         } catch (SQLException e) {
-            response = "Database error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
-            response = "Internal server error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
     }
 
     public static void userUpdateHandler(HttpExchange exchange) throws IOException {
@@ -48,25 +39,16 @@ public class ProfileHandler {
         User user = gson.fromJson(requestBody, User.class);
         user.setEmail(email);
 
-        String response;
         try {
             ProfileController.updateUser(user);
-            response = "Profile updated successfully";
-            exchange.sendResponseHeaders(200, response.getBytes().length);
+            Server.sendResponse(exchange, 200, "Profile updated successfully");
         } catch (IllegalArgumentException e) {
-            response = e.getMessage();
-            exchange.sendResponseHeaders(400, response.getBytes().length);
+            Server.sendResponse(exchange, 400, e.getMessage());
         } catch (SQLException e) {
-            response = "Database error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
-            response = "Internal server error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
     }
 
     public static void skillUpdateHandler(HttpExchange exchange) throws IOException {
@@ -76,22 +58,14 @@ public class ProfileHandler {
         Skill skill = gson.fromJson(requestBody, Skill.class);
         skill.setEmail(email);
 
-        String response;
         try {
             ProfileController.updateSkill(skill);
-            response = "Skill updated successfully";
-            exchange.sendResponseHeaders(200, response.getBytes().length);
+            Server.sendResponse(exchange, 200, "Skill updated successfully");
         } catch (SQLException e) {
-            response = "Database error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
-            response = "Internal server error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
     }
 
     public static void addEducationHandler(HttpExchange exchange) throws IOException {
@@ -101,25 +75,16 @@ public class ProfileHandler {
         Education education = gson.fromJson(requestBody, Education.class);
         education.setEmail(email);
 
-        String response;
         try {
             ProfileController.addEducation(education);
-            response = "Education added successfully";
-            exchange.sendResponseHeaders(200, response.getBytes().length);
+            Server.sendResponse(exchange, 200, "Education added successfully");
         } catch (IllegalArgumentException e) {
-            response = e.getMessage();
-            exchange.sendResponseHeaders(400, response.getBytes().length);
+            Server.sendResponse(exchange, 400, e.getMessage());
         } catch (SQLException e) {
-            response = "Database error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
-            response = "Internal server error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
     }
 
     public static void educationUpdateHandler(HttpExchange exchange) throws IOException {
@@ -128,27 +93,18 @@ public class ProfileHandler {
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Education education = gson.fromJson(requestBody, Education.class);
 
-        String response;
         try {
             Education currentEducation = UserController.getEducation(email);
             education.setId(currentEducation.getId());
             ProfileController.updateEducation(education);
-            response = "Education updated successfully";
-            exchange.sendResponseHeaders(200, response.getBytes().length);
+            Server.sendResponse(exchange, 200, "Education updated successfully");
         } catch (IllegalArgumentException e) {
-            response = e.getMessage();
-            exchange.sendResponseHeaders(400, response.getBytes().length);
+            Server.sendResponse(exchange, 400, e.getMessage());
         } catch (SQLException e) {
-            response = "Database error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
-            response = "Internal server error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
     }
 
     public static void contactUpdateHandler(HttpExchange exchange) throws IOException {
@@ -158,24 +114,15 @@ public class ProfileHandler {
         Contact contact = gson.fromJson(requestBody, Contact.class);
         contact.setEmail(email);
 
-        String response;
         try {
             ProfileController.updateContact(contact);
-            response = "Contact updated successfully";
-            exchange.sendResponseHeaders(200, response.getBytes().length);
+            Server.sendResponse(exchange, 200, "Contact updated successfully");
         } catch (IllegalArgumentException e) {
-            response = e.getMessage();
-            exchange.sendResponseHeaders(400, response.getBytes().length);
+            Server.sendResponse(exchange, 400, e.getMessage());
         } catch (SQLException e) {
-            response = "Database error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
-            response = "Internal server error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
     }
 }
