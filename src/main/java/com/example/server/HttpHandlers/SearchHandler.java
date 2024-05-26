@@ -1,12 +1,12 @@
 package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.SearchController;
+import com.example.server.Server;
 import com.example.server.models.User;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,21 +19,13 @@ public class SearchHandler {
 
         String name = params.get("name");
 
-        String response;
         try {
             ArrayList<User> users = SearchController.getUsersByName(name);
-            response = gson.toJson(users);
-            exchange.sendResponseHeaders(200, response.length());
+            Server.sendResponse(exchange, 200, gson.toJson(users));
         } catch (SQLException e) {
-            response = "Database error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
-            response = "Internal server error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
     }
 }

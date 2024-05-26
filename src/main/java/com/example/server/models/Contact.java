@@ -10,6 +10,11 @@ public class Contact {
     private String address;
     private Date birthDate;
     private String fastConnect;
+    private String visibility;
+
+    public static String ONLY_ME = "only_me";
+    public static String MY_CONNECTIONS = "my_connections";
+    public static String PRIVATE = "private";
 
     public Contact(String email, String viewLink, String phoneNumber) {
         this.email = email;
@@ -25,6 +30,17 @@ public class Contact {
         this.address = address;
         this.birthDate = birthDate;
         this.fastConnect = fastConnect;
+    }
+
+    public Contact(int id, String email, String viewLink, String phoneNumber, String address, Date birthDate, String fastConnect, String visibility) {
+        this.id = id;
+        this.email = email;
+        this.viewLink = viewLink;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.birthDate = birthDate;
+        this.fastConnect = fastConnect;
+        this.visibility = visibility;
     }
 
     public int getId() {

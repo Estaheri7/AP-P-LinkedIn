@@ -2,6 +2,7 @@ package com.example.server.Router;
 
 import com.example.server.HttpHandlers.AuthHandler;
 import com.example.server.HttpHandlers.ProfileHandler;
+import com.example.server.HttpHandlers.SearchHandler;
 import com.example.server.HttpHandlers.UserHandler;
 import com.example.server.Server;
 
@@ -25,5 +26,7 @@ public class Router {
         server.post("/profile/add/education", ProfileHandler::addEducationHandler);
         server.put("/profile/update/education", ProfileHandler::educationUpdateHandler);
         server.put("/profile/update/contact", ProfileHandler::contactUpdateHandler);
+
+        server.get("/search", SearchHandler::searchByName);
     }
 }

@@ -14,14 +14,14 @@ import java.util.ArrayList;
 
 public class ProfileController extends BaseController {
 
-    public static UserProfile getProfile(String email) throws SQLException {
+    public static UserProfile getProfile(String email, String viewerEmail) throws SQLException {
         User user = userDB.getUser(email);
         if (user == null) {
             return null;
         }
 
         Skill skill = skillDB.getSkill(email);
-        Contact contact = contactDB.getContact(email);
+        Contact contact = contactDB.getContact(email, viewerEmail);
         ArrayList<Education> educations = educationDB.getAllEducations(email);
 
         return new UserProfile(user, skill, contact, educations);

@@ -47,7 +47,7 @@ public class UserController extends BaseController {
         return educationDB.getAllEducations(email);
     }
 
-    public static Contact getContact(String email) throws SQLException {
-        return contactDB.getContact(email);
+    public static Contact getContact(String email, String viewerEmail) throws SQLException {
+        return contactDB.getContact(email, viewerEmail);
     }
 }

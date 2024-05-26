@@ -1,11 +1,11 @@
 package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.AuthController;
+import com.example.server.Server;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,24 +19,16 @@ public class AuthHandler {
         String email = loginData.get("email");
         String password = loginData.get("password");
 
-        String response;
         try {
             String token = AuthController.loginUser(email, password);
             Map<String, String> responseMap = new HashMap<>();
             responseMap.put("token", token);
-            response = gson.toJson(responseMap);
-            exchange.sendResponseHeaders(200, response.getBytes().length);
+            Server.sendResponse(exchange, 200, gson.toJson(responseMap));
         } catch (IllegalArgumentException e) {
-            response = e.getMessage();
-            exchange.sendResponseHeaders(400, response.getBytes().length);
+            Server.sendResponse(exchange, 400, gson.toJson(e.getMessage()));
         } catch (Exception e) {
-            response = "Internal server error: " + e.getMessage();
-            exchange.sendResponseHeaders(500, response.getBytes().length);
+            Server.sendResponse(exchange, 500, gson.toJson(e.getMessage()));
         }
-
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
     }
 }
 
