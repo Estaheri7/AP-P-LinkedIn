@@ -20,7 +20,7 @@ public class ProfileHandler {
     public static void getProfileHandler(HttpExchange exchange) throws IOException {
         String email = extractEmailFromPath(exchange.getRequestURI().getPath());
         String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
-        System.out.println(email + " and " + viewerEmail);
+
         try {
             UserProfile userProfile = ProfileController.getProfile(email, viewerEmail);
             if (userProfile != null) {
