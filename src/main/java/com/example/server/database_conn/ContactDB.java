@@ -23,6 +23,7 @@ public class ContactDB extends BaseDB {
                 + "address VARCHAR(220),"
                 + "birth_date DATE,"
                 + "fast_connect VARCHAR(40),"
+                + "visibility VARCHAR(40) NOT NULL DEFAULT 'private',"
                 + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE"
                 + ");";
 
@@ -73,7 +74,7 @@ public class ContactDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
-    public Contact getContact(String email) throws SQLException {
+    public Contact getContact(String email, String viewerEmail) throws SQLException {
         String query = "SELECT * FROM contact WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
@@ -86,11 +87,22 @@ public class ContactDB extends BaseDB {
             String address = resultSet.getString("address");
             Date birthDate = resultSet.getDate("birth_date");
             String fastConnect = resultSet.getString("fast_connect");
+            String visibility = resultSet.getString("visibility");
+            if (visibility.equals(Contact.PRIVATE) && !email.equals(viewerEmail)) {
+                birthDate = null;
+            }
 
-            return new Contact(id, email, viewLink, phoneNumber, address, birthDate, fastConnect);
+            return new Contact(id, email, viewLink, phoneNumber, address, birthDate, fastConnect, visibility);
         }
 
         return null;
     }
 
+    public void changeVisibility(String email, String visibility) throws SQLException {
+        String query = "UPDATE contact SET visibility = ? WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, visibility);
+        preparedStatement.setString(2, email);
+        preparedStatement.executeUpdate();
+    }
 }
