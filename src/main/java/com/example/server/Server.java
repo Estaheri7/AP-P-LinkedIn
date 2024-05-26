@@ -99,8 +99,11 @@ public class Server {
     }
 
     private void handleMethodNotAllowed(HttpExchange exchange) throws IOException {
-        String response = "Method not allowed";
-        exchange.sendResponseHeaders(405, response.getBytes().length);
+        sendResponse(exchange, 405, "Method not allowed");
+    }
+
+    public static void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {
+        exchange.sendResponseHeaders(statusCode, response.getBytes().length);
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
