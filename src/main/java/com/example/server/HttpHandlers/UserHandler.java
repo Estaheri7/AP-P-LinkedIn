@@ -114,7 +114,7 @@ public class UserHandler {
         String email = extractEmailFromPath(exchange.getRequestURI().getPath());
 
         try {
-            Contact contact = UserController.getContact(email);
+            Contact contact = UserController.getContact(email, email);
             if (contact == null) {
                 Server.sendResponse(exchange, 404, "Contact not found");
             } else {
