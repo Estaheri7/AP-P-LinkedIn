@@ -5,6 +5,7 @@ import com.example.server.HttpControllers.UserController;
 import com.example.server.Server;
 import com.example.server.models.*;
 import com.example.server.utils.AuthUtil;
+import com.example.server.utils.JwtUtil;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -18,9 +19,10 @@ public class ProfileHandler {
 
     public static void getProfileHandler(HttpExchange exchange) throws IOException {
         String email = extractEmailFromPath(exchange.getRequestURI().getPath());
-
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        System.out.println(email + " and " + viewerEmail);
         try {
-            UserProfile userProfile = ProfileController.getProfile(email);
+            UserProfile userProfile = ProfileController.getProfile(email, viewerEmail);
             if (userProfile != null) {
                 Server.sendResponse(exchange, 200, gson.toJson(userProfile));
             } else {
