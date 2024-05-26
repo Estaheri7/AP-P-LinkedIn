@@ -4,6 +4,7 @@ import com.example.server.HttpControllers.ProfileController;
 import com.example.server.HttpControllers.UserController;
 import com.example.server.Server;
 import com.example.server.models.*;
+import com.example.server.utils.AuthUtil;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -33,11 +34,15 @@ public class ProfileHandler {
     }
 
     public static void userUpdateHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         User user = gson.fromJson(requestBody, User.class);
-        user.setEmail(email);
+        user.setEmail(requestEmail);
 
         try {
             ProfileController.updateUser(user);
@@ -52,11 +57,15 @@ public class ProfileHandler {
     }
 
     public static void skillUpdateHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Skill skill = gson.fromJson(requestBody, Skill.class);
-        skill.setEmail(email);
+        skill.setEmail(requestEmail);
 
         try {
             ProfileController.updateSkill(skill);
@@ -69,11 +78,15 @@ public class ProfileHandler {
     }
 
     public static void addEducationHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Education education = gson.fromJson(requestBody, Education.class);
-        education.setEmail(email);
+        education.setEmail(requestEmail);
 
         try {
             ProfileController.addEducation(education);
@@ -88,13 +101,17 @@ public class ProfileHandler {
     }
 
     public static void educationUpdateHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Education education = gson.fromJson(requestBody, Education.class);
 
         try {
-            Education currentEducation = UserController.getEducation(email);
+            Education currentEducation = UserController.getEducation(requestEmail);
             education.setId(currentEducation.getId());
             ProfileController.updateEducation(education);
             Server.sendResponse(exchange, 200, "Education updated successfully");
@@ -108,11 +125,15 @@ public class ProfileHandler {
     }
 
     public static void contactUpdateHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Contact contact = gson.fromJson(requestBody, Contact.class);
-        contact.setEmail(email);
+        contact.setEmail(requestEmail);
 
         try {
             ProfileController.updateContact(contact);
