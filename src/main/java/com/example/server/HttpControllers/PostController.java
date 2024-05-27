@@ -25,4 +25,12 @@ public class PostController extends BaseController {
     public static void addPost(Post post) throws SQLException {
         postDB.insertData(post);
     }
+
+    public static void updatePost(Post post) throws SQLException {
+        postDB.updateData(post);
+    }
+
+    public static Post getPost(int id) throws SQLException {
+        return postDB.getPost(id);
+    }
 }
