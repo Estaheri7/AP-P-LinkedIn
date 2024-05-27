@@ -36,7 +36,7 @@ public class LikeDB extends BaseDB {
     }
 
     public void deleteData(int id) throws SQLException {
-        String query = "DELETE FROM likes WHERE id = ?";
+        String query = "DELETE FROM likes WHERE post_id = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setInt(1, id);
         preparedStatement.executeUpdate();
@@ -83,6 +83,15 @@ public class LikeDB extends BaseDB {
         }
 
         return likes;
+    }
+
+    public boolean likeExists(Like like) throws SQLException {
+        String query = "SELECT * FROM likes WHERE post_id = ? AND email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, like.getPostId());
+        preparedStatement.setString(2, like.getEmail());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next();
     }
 }
 
