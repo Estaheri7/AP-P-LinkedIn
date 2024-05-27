@@ -1,9 +1,6 @@
 package com.example.server.Router;
 
-import com.example.server.HttpHandlers.AuthHandler;
-import com.example.server.HttpHandlers.ProfileHandler;
-import com.example.server.HttpHandlers.SearchHandler;
-import com.example.server.HttpHandlers.UserHandler;
+import com.example.server.HttpHandlers.*;
 import com.example.server.Server;
 
 public class Router {
@@ -28,5 +25,11 @@ public class Router {
         server.put("/profile/update/contact", ProfileHandler::contactUpdateHandler);
 
         server.get("/search", SearchHandler::searchByName);
+
+        server.get("/posts/feeds", PostHandler::showAllPosts);
+        server.get("/posts", PostHandler::getPostHandler);
+        server.post("/posts/add", PostHandler::addPostHandler);
+        server.put("/posts/update", PostHandler::updatePostHandler);
+        server.delete("/posts/delete", PostHandler::deletePostHandler);
     }
 }
