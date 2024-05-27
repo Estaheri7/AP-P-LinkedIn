@@ -18,6 +18,17 @@ import static com.example.server.Server.extractEmailFromPath;
 public class PostHandler {
     private static final Gson gson = new Gson();
 
+    public static void showAllPosts(HttpExchange exchange) throws IOException {
+        try {
+            ArrayList<Post> posts = PostController.getAllPosts();
+            Server.sendResponse(exchange, 200, gson.toJson(posts));
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
     public static void addPostHandler(HttpExchange exchange) throws IOException {
         String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
         String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
