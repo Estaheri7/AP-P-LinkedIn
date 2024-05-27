@@ -31,5 +31,8 @@ public class Router {
         server.post("/posts/add", PostHandler::addPostHandler);
         server.put("/posts/update", PostHandler::updatePostHandler);
         server.delete("/posts/delete", PostHandler::deletePostHandler);
+
+        server.put("/posts/like", PostHandler::likePostHandler);
+        server.put("/posts/dislike", PostHandler::dislikePostHandler);
     }
 }
