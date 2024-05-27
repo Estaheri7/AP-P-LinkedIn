@@ -10,6 +10,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import static com.example.server.Server.extractEmailFromPath;
 
@@ -25,12 +26,40 @@ public class PostHandler {
         post.setAuthor(requestEmail);
 
         try {
-            if (!viewerEmail.equals(requestEmail)) {
+            if (!requestEmail.equals(viewerEmail)) {
                 Server.sendResponse(exchange, 403, "Forbidden request");
                 return;
             }
             PostController.addPost(post);
             Server.sendResponse(exchange, 200, "Post added");
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void updatePostHandler(HttpExchange exchange) throws IOException {
+        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
+
+        int id = Integer.parseInt(queryParams.get("id"));
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        String requestBody = new String(exchange.getRequestBody().readAllBytes());
+        Post post = gson.fromJson(requestBody, Post.class);
+        post.setId(id);
+        post.setAuthor(requestEmail);
+
+        try {
+            Post postToUpdate = PostController.getPost(id);
+            if (!requestEmail.equals(viewerEmail) || !postToUpdate.equals(post)) {
+                Server.sendResponse(exchange, 403, "Forbidden request");
+                return;
+            }
+
+            PostController.updatePost(post);
+            Server.sendResponse(exchange, 200, "Post updated");
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
