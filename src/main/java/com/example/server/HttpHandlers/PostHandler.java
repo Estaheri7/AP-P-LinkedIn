@@ -2,6 +2,7 @@ package com.example.server.HttpHandlers;
 
 import com.example.server.HttpControllers.PostController;
 import com.example.server.Server;
+import com.example.server.models.Like;
 import com.example.server.models.Post;
 import com.example.server.utils.AuthUtil;
 import com.example.server.utils.JwtUtil;
@@ -124,6 +125,88 @@ public class PostHandler {
 
             PostController.deletePost(id);
             Server.sendResponse(exchange, 200, "Post deleted successfully");
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void likePostHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+            return;
+        }
+
+        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
+        int postId = Integer.parseInt(queryParams.get("id"));
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        try {
+            if(PostController.getPost(postId) == null) {
+                Server.sendResponse(exchange, 404, "Post not found");
+                return;
+            }
+
+            if (requestEmail.equals(viewerEmail)) {
+                Server.sendResponse(exchange, 403, "You cannot like your own post");
+                return;
+            }
+
+            Like like = new Like(postId, viewerEmail);
+            if (PostController.likeExists(like)) {
+                Server.sendResponse(exchange, 403, "Liked already!");
+                return;
+            }
+
+            PostController.likePost(like);
+            Server.sendResponse(exchange, 200, "Liked post successfully");
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void dislikePostHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+            return;
+        }
+
+        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
+        int postId = Integer.parseInt(queryParams.get("id"));
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        try {
+            if(PostController.getPost(postId) == null) {
+                Server.sendResponse(exchange, 404, "Post not found");
+                return;
+            }
+
+            if (requestEmail.equals(viewerEmail)) {
+                Server.sendResponse(exchange, 403, "You cannot dislike your own post");
+                return;
+            }
+
+            Like like = new Like(postId, viewerEmail);
+            if (!PostController.likeExists(like)) {
+                Server.sendResponse(exchange, 403, "You haven't like yet");
+                return;
+            }
+
+            PostController.dislikePost(postId);
+            Server.sendResponse(exchange, 200, "Disliked post successfully");
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
