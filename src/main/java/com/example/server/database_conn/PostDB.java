@@ -80,13 +80,15 @@ public class PostDB extends BaseDB {
         return null;
     }
 
-    public Post getPost(String email) throws SQLException {
+    public ArrayList<Post> getPosts(String email) throws SQLException {
         String query = "SELECT * FROM posts WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        if (resultSet.next()) {
+        ArrayList<Post> posts = new ArrayList<>();
+
+        while (resultSet.next()) {
             int postId = resultSet.getInt("id");
             String author = resultSet.getString("email");
             String title = resultSet.getString("title");
@@ -95,10 +97,11 @@ public class PostDB extends BaseDB {
             int likes = resultSet.getInt("likes");
             int comments = resultSet.getInt("comments");
 
-            return new Post(postId, author, title, content, createdAt, likes, comments);
+            Post post = new Post(postId, author, title, content, createdAt, likes, comments);
+            posts.add(post);
         }
 
-        return null;
+        return posts;
     }
 
     public ArrayList<Post> getAllPosts() throws SQLException {
