@@ -6,6 +6,7 @@ import com.example.server.database_conn.PostDB;
 import com.example.server.models.Post;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class PostController extends BaseController {
     private static final PostDB postDB;
@@ -32,5 +33,9 @@ public class PostController extends BaseController {
 
     public static Post getPost(int id) throws SQLException {
         return postDB.getPost(id);
+    }
+
+    public static ArrayList<Post> getPosts(String email) throws SQLException {
+        return postDB.getPosts(email);
     }
 }
