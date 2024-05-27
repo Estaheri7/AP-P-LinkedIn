@@ -91,4 +91,32 @@ public class PostHandler {
             Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
     }
+
+    public static void deletePostHandler(HttpExchange exchange) throws IOException {
+        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
+
+        int id = Integer.parseInt(queryParams.get("id"));
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        String requestBody = new String(exchange.getRequestBody().readAllBytes());
+        Post post = gson.fromJson(requestBody, Post.class);
+        post.setId(id);
+        post.setAuthor(requestEmail);
+
+        try {
+            Post postToDelete = PostController.getPost(id);
+            if (!requestEmail.equals(viewerEmail) || !postToDelete.equals(post)) {
+                Server.sendResponse(exchange, 403, "Forbidden request");
+                return;
+            }
+
+            PostController.deletePost(id);
+            Server.sendResponse(exchange, 200, "Post deleted successfully");
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
 }
