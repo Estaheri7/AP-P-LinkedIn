@@ -23,6 +23,10 @@ public class PostController extends BaseController {
         }
     }
 
+    public static ArrayList<Post> getAllPosts() throws SQLException {
+        return postDB.getAllPosts();
+    }
+
     public static void addPost(Post post) throws SQLException {
         postDB.insertData(post);
     }
