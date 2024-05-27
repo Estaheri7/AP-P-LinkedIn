@@ -38,4 +38,8 @@ public class PostController extends BaseController {
     public static ArrayList<Post> getPosts(String email) throws SQLException {
         return postDB.getPosts(email);
     }
+
+    public static void deletePost(int id) throws SQLException {
+        postDB.deleteData(id);
+    }
 }
