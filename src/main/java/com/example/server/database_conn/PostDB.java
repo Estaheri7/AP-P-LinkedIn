@@ -1,7 +1,9 @@
 package com.example.server.database_conn;
 
+import com.example.server.models.Like;
 import com.example.server.models.Post;
 
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -125,5 +127,21 @@ public class PostDB extends BaseDB {
         }
 
         return posts;
+    }
+
+    public void likePost(int postId) throws SQLException {
+        String query = "UPDATE posts SET likes = likes + 1 WHERE id = ?";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setInt(1, postId);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void dislikePost(int postId) throws SQLException {
+        String query = "UPDATE posts SET likes = likes - 1 WHERE id = ?";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setInt(1, postId);
+            preparedStatement.executeUpdate();
+        }
     }
 }
