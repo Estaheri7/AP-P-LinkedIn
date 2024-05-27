@@ -10,6 +10,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.example.server.Server.extractEmailFromPath;
@@ -60,6 +61,30 @@ public class PostHandler {
 
             PostController.updatePost(post);
             Server.sendResponse(exchange, 200, "Post updated");
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void getPostHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+            return;
+        }
+
+        try {
+            ArrayList<Post> posts = PostController.getPosts(requestEmail);
+            Server.sendResponse(exchange, 200, gson.toJson(posts));
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
