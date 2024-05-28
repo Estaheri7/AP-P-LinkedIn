@@ -34,5 +34,6 @@ public class Router {
 
         server.put("/posts/like", PostHandler::likePostHandler);
         server.put("/posts/dislike", PostHandler::dislikePostHandler);
+        server.get("/posts/likes", PostHandler::getLikesHandler);
     }
 }
