@@ -12,13 +12,13 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static com.example.server.Server.extractEmailFromPath;
+import static com.example.server.Server.extractFromPath;
 
 public class ProfileHandler {
     private static final Gson gson = new Gson();
 
     public static void getProfileHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String email = extractFromPath(exchange.getRequestURI().getPath());
         String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
 
         try {
@@ -36,7 +36,7 @@ public class ProfileHandler {
     }
 
     public static void userUpdateHandler(HttpExchange exchange) throws IOException {
-        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
 
         if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
             return;
@@ -59,7 +59,7 @@ public class ProfileHandler {
     }
 
     public static void skillUpdateHandler(HttpExchange exchange) throws IOException {
-        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
 
         if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
             return;
@@ -80,7 +80,7 @@ public class ProfileHandler {
     }
 
     public static void addEducationHandler(HttpExchange exchange) throws IOException {
-        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
 
         if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
             return;
@@ -103,7 +103,7 @@ public class ProfileHandler {
     }
 
     public static void educationUpdateHandler(HttpExchange exchange) throws IOException {
-        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
 
         if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
             return;
@@ -127,7 +127,7 @@ public class ProfileHandler {
     }
 
     public static void contactUpdateHandler(HttpExchange exchange) throws IOException {
-        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
 
         if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
             return;
