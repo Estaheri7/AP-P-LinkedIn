@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static com.example.server.Server.extractEmailFromPath;
+import static com.example.server.Server.extractFromPath;
 
 public class UserHandler {
     private static final Gson gson = new Gson();
@@ -36,7 +36,7 @@ public class UserHandler {
     }
 
     public static void getUserHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String email = extractFromPath(exchange.getRequestURI().getPath());
 
         try {
             User user = UserController.getUser(email);
@@ -64,7 +64,7 @@ public class UserHandler {
     }
 
     public static void getSkillHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String email = extractFromPath(exchange.getRequestURI().getPath());
 
         try {
             Skill skill = UserController.getSkill(email);
@@ -81,7 +81,7 @@ public class UserHandler {
     }
 
     public static void getEducationHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String email = extractFromPath(exchange.getRequestURI().getPath());
 
         try {
             Education education = UserController.getEducation(email);
@@ -98,7 +98,7 @@ public class UserHandler {
     }
 
     public static void getAllEducationHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String email = extractFromPath(exchange.getRequestURI().getPath());
 
         try {
             ArrayList<Education> educations = UserController.getAllEducations(email);
@@ -111,7 +111,7 @@ public class UserHandler {
     }
 
     public static void getContactHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String email = extractFromPath(exchange.getRequestURI().getPath());
 
         try {
             Contact contact = UserController.getContact(email, email);
