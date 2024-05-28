@@ -61,4 +61,8 @@ public class PostController extends BaseController {
     public static boolean likeExists(Like like) throws SQLException {
         return likeDB.likeExists(like);
     }
+
+    public static ArrayList<Like> getAllLikes(int postId) throws SQLException {
+        return likeDB.getLikes(postId);
+    }
 }
