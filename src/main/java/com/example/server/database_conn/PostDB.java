@@ -144,4 +144,18 @@ public class PostDB extends BaseDB {
             preparedStatement.executeUpdate();
         }
     }
+
+    public void increaseComment(int postId) throws SQLException {
+        String query = "UPDATE posts SET comments = comments + 1 WHERE id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, postId);
+        preparedStatement.executeUpdate();
+    }
+
+    public void decreaseComment(int postId) throws SQLException {
+        String query = "UPDATE posts SET comments = comments - 1 WHERE id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, postId);
+        preparedStatement.executeUpdate();
+    }
 }
