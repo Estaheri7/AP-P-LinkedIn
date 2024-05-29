@@ -6,16 +6,24 @@ public class Like {
     private int id;
     private int postId;
     private String email;
+    private String userName;
     private Timestamp likeTime;
 
     public Like(int postId, String email) {
         this.postId = postId;
         this.email = email;
     }
-    public Like(int id, int postId, String email, Timestamp likeTime) {
+
+    public Like(int postId, String email, String userName) {
+        this.postId = postId;
+        this.email = email;
+        this.userName = userName;
+    }
+    public Like(int id, int postId, String email, String userName, Timestamp likeTime) {
         this.id = id;
         this.postId = postId;
         this.email = email;
+        this.userName = userName;
         this.likeTime = likeTime;
     }
 
@@ -41,6 +49,14 @@ public class Like {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Timestamp getLikeTime() {

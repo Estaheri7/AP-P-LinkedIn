@@ -6,6 +6,7 @@ public class Comment {
     private int id;
     private int postId;
     private String email;
+    private String userName;
     private String comment;
     private Timestamp commentDate;
 
@@ -15,10 +16,18 @@ public class Comment {
         this.comment = comment;
     }
 
-    public Comment(int id, int postId, String email, String comment, Timestamp commentDate ) {
+    public Comment(int postId, String email, String userName, String comment) {
+        this.postId = postId;
+        this.email = email;
+        this.userName = userName;
+        this.comment = comment;
+    }
+
+    public Comment(int id, int postId, String email, String comment, String userName, Timestamp commentDate ) {
         this.id = id;
         this.postId = postId;
         this.email = email;
+        this.userName = userName;
         this.comment = comment;
         this.commentDate = commentDate;
     }
@@ -45,6 +54,14 @@ public class Comment {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getComment() {

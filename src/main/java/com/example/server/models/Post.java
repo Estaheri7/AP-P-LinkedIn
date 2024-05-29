@@ -27,6 +27,14 @@ public class Post {
         this.comments = comments;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return this.author.equals(post.author);
+    }
+
     public int getId() {
         return id;
     }

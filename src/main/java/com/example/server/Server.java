@@ -93,7 +93,7 @@ public class Server {
         return queryParams;
     }
 
-    public static String extractEmailFromPath(String path) {
+    public static String extractFromPath(String path) {
         String[] segments = path.split("/");
         return segments[segments.length - 1];
     }
