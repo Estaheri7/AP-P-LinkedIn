@@ -3,6 +3,7 @@ package com.example.server.HttpControllers;
 import com.example.server.database_conn.CommentDB;
 import com.example.server.database_conn.LikeDB;
 import com.example.server.database_conn.PostDB;
+import com.example.server.models.Comment;
 import com.example.server.models.Like;
 import com.example.server.models.Post;
 
@@ -64,5 +65,23 @@ public class PostController extends BaseController {
 
     public static ArrayList<Like> getAllLikes(int postId) throws SQLException {
         return likeDB.getLikes(postId);
+    }
+
+    public static void addCommentToPost(Comment comment) throws SQLException {
+        commentDB.insertData(comment);
+        postDB.increaseComment(comment.getPostId());
+    }
+
+    public static Comment getComment(int id) throws SQLException {
+        return commentDB.getComment(id);
+    }
+
+    public static boolean commentExists(Comment comment) throws SQLException {
+        return commentDB.commentExists(comment);
+    }
+
+    public static void deleteCommentFromPost(int commentId, int postId) throws SQLException {
+        commentDB.deleteData(commentId);
+        postDB.decreaseComment(postId);
     }
 }
