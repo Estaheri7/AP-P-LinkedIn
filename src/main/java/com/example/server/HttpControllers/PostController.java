@@ -88,4 +88,8 @@ public class PostController extends BaseController {
     public static void updateComment(Comment comment) throws SQLException {
         commentDB.updateData(comment);
     }
+
+    public static ArrayList<Comment> getAllComments(int postId) throws SQLException {
+        return commentDB.getCommentsByPostId(postId);
+    }
 }
