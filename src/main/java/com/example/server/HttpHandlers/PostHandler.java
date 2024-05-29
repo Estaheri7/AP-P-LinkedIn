@@ -4,6 +4,7 @@ import com.example.server.HttpControllers.PostController;
 import com.example.server.HttpControllers.UserController;
 import com.example.server.Server;
 import com.example.server.database_conn.LikeDB;
+import com.example.server.models.Comment;
 import com.example.server.models.Like;
 import com.example.server.models.Post;
 import com.example.server.models.User;
@@ -230,6 +231,81 @@ public class PostHandler {
             }
             ArrayList<Like> likes = PostController.getAllLikes(postId);
             Server.sendResponse(exchange, 200, gson.toJson(likes));
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void addCommentHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+            return;
+        }
+
+        int postId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
+        String requestBody = new String(exchange.getRequestBody().readAllBytes());
+        Comment comment = gson.fromJson(requestBody, Comment.class);
+        comment.setPostId(postId);
+        comment.setEmail(viewerEmail);
+
+        try {
+            Post post = PostController.getPost(postId);
+            if (post == null) {
+                Server.sendResponse(exchange, 404, "Post not found!");
+                return;
+            }
+
+            User user = UserController.getUser(viewerEmail);
+            comment.setUserName(user.getFirstName() + " " + user.getLastName());
+            PostController.addCommentToPost(comment);
+            Server.sendResponse(exchange, 200, "Comment added successfully");
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void removeCommentHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+            return;
+        }
+
+        int commentId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
+
+        try {
+            Comment comment = PostController.getComment(commentId);
+            if (comment == null || PostController.commentExists(comment)) {
+                Server.sendResponse(exchange, 404, "Comment not found");
+                return;
+            }
+
+            Post post = PostController.getPost(comment.getPostId());
+            if (post == null) {
+                Server.sendResponse(exchange, 404, "Post not found!");
+                return;
+            }
+
+            if (!comment.getEmail().equals(viewerEmail)) {
+                Server.sendResponse(exchange, 403, "This is not your comment");
+                return;
+            }
+
+            PostController.deleteCommentFromPost(commentId, comment.getPostId());
+            Server.sendResponse(exchange, 200, "Comment deleted successfully");
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
