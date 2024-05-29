@@ -40,7 +40,7 @@ public class CommentDB extends BaseDB {
     }
 
     public void updateData(Comment comment) throws SQLException {
-        String query = "UPDATE comments SET comment = ? WHERE id = ?";
+        String query = "UPDATE comments SET message = ? WHERE id = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, comment.getComment());
         preparedStatement.setInt(2, comment.getId());
@@ -60,13 +60,13 @@ public class CommentDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
-    public List<Comment> getCommentsByPostId(int postId) throws SQLException {
+    public ArrayList<Comment> getCommentsByPostId(int postId) throws SQLException {
         String query = "SELECT * FROM comments WHERE post_id = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setInt(1, postId);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Comment> comments = new ArrayList<>();
+        ArrayList<Comment> comments = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String email = resultSet.getString("email");
@@ -80,13 +80,13 @@ public class CommentDB extends BaseDB {
         return comments;
     }
 
-    public List<Comment> getCommentsByEmail(String email) throws SQLException {
+    public ArrayList<Comment> getCommentsByEmail(String email) throws SQLException {
         String query = "SELECT * FROM comments WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Comment> comments = new ArrayList<>();
+        ArrayList<Comment> comments = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             int postId = resultSet.getInt("post_id");
