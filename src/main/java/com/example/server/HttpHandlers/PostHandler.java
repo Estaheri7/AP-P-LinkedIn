@@ -356,4 +356,23 @@ public class PostHandler {
             Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
     }
+
+    public static void getCommentsHandler(HttpExchange exchange) throws IOException {
+        int postId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
+
+        try {
+            Post post = PostController.getPost(postId);
+            if (post == null) {
+                Server.sendResponse(exchange, 404, "Post not found!");
+                return;
+            }
+
+            ArrayList<Comment> comments = PostController.getAllComments(postId);
+            Server.sendResponse(exchange, 200, gson.toJson(comments));
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
 }
