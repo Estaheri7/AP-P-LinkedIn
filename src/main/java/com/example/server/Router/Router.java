@@ -35,5 +35,10 @@ public class Router {
         server.put("/posts/like", PostHandler::likePostHandler);
         server.put("/posts/dislike", PostHandler::dislikePostHandler);
         server.get("/posts/likes", PostHandler::getLikesHandler);
+
+        server.get("/posts/comments", PostHandler::getCommentsHandler);
+        server.post("/posts/add-comment", PostHandler::addCommentHandler);
+        server.put("/posts/update-comment", PostHandler::updateCommentHandler);
+        server.delete("/posts/delete-comment", PostHandler::removeCommentHandler);
     }
 }
