@@ -84,4 +84,8 @@ public class PostController extends BaseController {
         commentDB.deleteData(commentId);
         postDB.decreaseComment(postId);
     }
+
+    public static void updateComment(Comment comment) throws SQLException {
+        commentDB.updateData(comment);
+    }
 }
