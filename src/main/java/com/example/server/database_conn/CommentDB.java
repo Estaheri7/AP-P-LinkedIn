@@ -18,6 +18,7 @@ public class CommentDB extends BaseDB {
                 + "id INT AUTO_INCREMENT PRIMARY KEY,"
                 + "post_id INT NOT NULL,"
                 + "email VARCHAR(255) NOT NULL,"
+                + "userName VARCHAR(255) NOT NULL,"
                 + "comment_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
                 + "message VARCHAR(1250) NOT NULL,"
                 + "FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,"
@@ -29,11 +30,13 @@ public class CommentDB extends BaseDB {
     }
 
     public void insertData(Comment comment) throws SQLException {
-        String query = "INSERT INTO comments (post_id, email, message) VALUES (?, ?, ?)";
+        String query = "INSERT INTO comments (post_id, email, userName, message) VALUES (?, ?, ?, ?)";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setInt(1, comment.getPostId());
         preparedStatement.setString(2, comment.getEmail());
-        preparedStatement.setString(3, comment.getComment());
+        preparedStatement.setString(3, comment.getUserName());
+        preparedStatement.setString(4, comment.getComment());
+        preparedStatement.executeUpdate();
     }
 
     public void updateData(Comment comment) throws SQLException {
@@ -67,9 +70,10 @@ public class CommentDB extends BaseDB {
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String email = resultSet.getString("email");
+            String userName = resultSet.getString("userName");
             Timestamp commentDate = resultSet.getTimestamp("comment_date");
             String message = resultSet.getString("message");
-            Comment comment = new Comment(id, postId, email, message, commentDate);
+            Comment comment = new Comment(id, postId, email, userName, message, commentDate);
             comments.add(comment);
         }
 
@@ -86,14 +90,40 @@ public class CommentDB extends BaseDB {
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             int postId = resultSet.getInt("post_id");
+            String userName = resultSet.getString("userName");
             Timestamp commentDate = resultSet.getTimestamp("comment_date");
             String message = resultSet.getString("message");
-            Comment comment = new Comment(id, postId, email, message, commentDate);
+            Comment comment = new Comment(id, postId, email, userName, message, commentDate);
             comments.add(comment);
         }
 
         return comments;
     }
 
+    public Comment getComment(int id) throws SQLException {
+        String query = "SELECT * FROM comments WHERE id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            int postId = resultSet.getInt("post_id");
+            String email = resultSet.getString("email");
+            String userName = resultSet.getString("userName");
+            Timestamp commentDate = resultSet.getTimestamp("comment_date");
+            String message = resultSet.getString("message");
+            return new Comment(id, postId, email, userName, message, commentDate);
+        }
+        return null;
 
+    }
+
+    public boolean commentExists(Comment comment) throws SQLException {
+        String query = "SELECT * FROM comments WHERE email = ? AND post_id = ? AND message = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, comment.getEmail());
+        preparedStatement.setInt(2, comment.getPostId());
+        preparedStatement.setString(3, comment.getComment());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next();
+    }
 }
