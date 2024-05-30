@@ -36,7 +36,34 @@ public class FollowController extends BaseController {
         return followDB.getFollow(email);
     }
 
+    public static void follow(String followerEmail, String followedEmail) throws SQLException {
+        User follower = userDB.getUser(followerEmail);
+        User followed = userDB.getUser(followedEmail);
+        if (follower == null || followed == null) {
+            throw new IllegalArgumentException("Invalid follower or followed email");
+        }
 
+        Follow follow = new Follow(0, followerEmail, followedEmail);
+        userDB.increaseFollowers(followedEmail);
+        userDB.increaseFollowings(followerEmail);
+        followDB.insertData(follow);
+    }
+
+    public static void unfollow(String followerEmail, String followedEmail) throws SQLException {
+        User follower = userDB.getUser(followerEmail);
+        User followed = userDB.getUser(followedEmail);
+        if (follower == null || followed == null) {
+            throw new IllegalArgumentException("Invalid follower or followed email");
+        }
+        Follow follow = followDB.getFollow(followerEmail, followedEmail);
+        if (follow == null) {
+            throw new IllegalArgumentException("Invalid follower or followed email");
+        }
+
+        userDB.decreaseFollowers(followedEmail);
+        userDB.decreaseFollowings(followerEmail);
+        followDB.deleteData(follow.getId());
+    }
 }
 
 
