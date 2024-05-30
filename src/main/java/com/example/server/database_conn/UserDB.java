@@ -171,4 +171,11 @@ public class UserDB extends BaseDB {
 
         return users;
     }
+
+    public void increaseFollowers(String email) throws SQLException {
+        String query = "UPDATE users SET followers = followers + 1 WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        preparedStatement.executeUpdate();
+    }
 }
