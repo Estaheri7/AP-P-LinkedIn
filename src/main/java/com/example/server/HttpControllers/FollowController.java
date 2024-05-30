@@ -64,6 +64,10 @@ public class FollowController extends BaseController {
         userDB.decreaseFollowings(followerEmail);
         followDB.deleteData(follow.getId());
     }
+
+    public static boolean isFollowed(String followerEmail, String followedEmail) throws SQLException {
+        return followDB.isFollowed(followerEmail, followedEmail);
+    }
 }
 
 
