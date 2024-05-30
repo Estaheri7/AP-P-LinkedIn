@@ -50,13 +50,13 @@ public class FollowDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
-    public List<Follow> getFollow(String follower) throws SQLException {
+    public ArrayList<Follow> getFollow(String follower) throws SQLException {
         String query = "SELECT * FROM follows WHERE follower = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, follower);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Follow> followers = new ArrayList<>();
+        ArrayList<Follow> followers = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String followed = resultSet.getString("followed");
@@ -67,13 +67,13 @@ public class FollowDB extends BaseDB {
         return followers;
     }
 
-    public List<Follow> getFollowed(String followed) throws SQLException {
+    public ArrayList<Follow> getFollowed(String followed) throws SQLException {
         String query = "SELECT * FROM follows WHERE followed = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, followed);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Follow> followeds = new ArrayList<>();
+        ArrayList<Follow> followeds = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String follower = resultSet.getString("follower");
@@ -82,6 +82,30 @@ public class FollowDB extends BaseDB {
         }
 
         return followeds;
+    }
+
+    public Follow getFollow(String followerEmail, String followedEmail) throws SQLException {
+        String query = "SELECT * FROM follows WHERE follower = ? AND followed = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, followerEmail);
+        preparedStatement.setString(2, followedEmail);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        if (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            return new Follow(id ,followerEmail, followedEmail);
+        }
+
+        return null;
+    }
+
+    public boolean isFollowed(String followerEmail, String followedEmail) throws SQLException {
+        String query = "SELECT * FROM follows WHERE follower = ? AND followed = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, followerEmail);
+        preparedStatement.setString(2, followedEmail);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next();
     }
 
 }
