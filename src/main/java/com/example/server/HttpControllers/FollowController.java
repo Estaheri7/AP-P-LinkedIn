@@ -23,7 +23,7 @@ public class FollowController extends BaseController {
     public static ArrayList<Follow> getFollowers(String email) throws SQLException {
         User user = userDB.getUser(email);
         if (user == null) {
-            return null;
+            throw new IllegalArgumentException("User not found");
         }
         return followDB.getFollowed(email);
     }
@@ -31,7 +31,7 @@ public class FollowController extends BaseController {
     public static ArrayList<Follow> getFollowing(String email) throws SQLException {
         User user = userDB.getUser(email);
         if (user == null) {
-            return null;
+            throw new IllegalArgumentException("User not found");
         }
         return followDB.getFollow(email);
     }
@@ -44,8 +44,8 @@ public class FollowController extends BaseController {
         }
 
         Follow follow = new Follow(0, followerEmail, followedEmail);
-        userDB.increaseFollowers(followedEmail);
-        userDB.increaseFollowings(followerEmail);
+        userDB.increaseFollowers(followerEmail);
+        userDB.increaseFollowings(followedEmail);
         followDB.insertData(follow);
     }
 
@@ -55,13 +55,13 @@ public class FollowController extends BaseController {
         if (follower == null || followed == null) {
             throw new IllegalArgumentException("Invalid follower or followed email");
         }
-        Follow follow = followDB.getFollow(followerEmail, followedEmail);
-        if (follow == null) {
-            throw new IllegalArgumentException("Invalid follower or followed email");
+        if (!followDB.isFollowed(followerEmail, followedEmail)) {
+            throw new IllegalArgumentException("you have to follow first!");
         }
 
-        userDB.decreaseFollowers(followedEmail);
-        userDB.decreaseFollowings(followerEmail);
+        Follow follow = followDB.getFollow(followerEmail, followedEmail);
+        userDB.decreaseFollowers(followerEmail);
+        userDB.decreaseFollowings(followedEmail);
         followDB.deleteData(follow.getId());
     }
 
