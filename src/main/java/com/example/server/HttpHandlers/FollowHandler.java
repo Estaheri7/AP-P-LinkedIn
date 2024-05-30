@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static com.example.server.Server.extractEmailFromPath;
+import static com.example.server.Server.extractFromPath;
 
 public class FollowHandler {
     private static final Gson gson = new Gson();
@@ -24,7 +24,7 @@ public class FollowHandler {
         }
 
         String viewerEmail = JwtUtil.parseToken(token);
-        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
 
         if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
             return;
@@ -64,7 +64,7 @@ public class FollowHandler {
         }
 
         String viewerEmail = JwtUtil.parseToken(token);
-        String requestEmail = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
 
         if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
             return;
@@ -93,7 +93,7 @@ public class FollowHandler {
     }
 
     public static void getFollowersHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String email = extractFromPath(exchange.getRequestURI().getPath());
 
         try {
             ArrayList<Follow> followers = FollowController.getFollowers(email);
@@ -108,7 +108,7 @@ public class FollowHandler {
     }
 
     public static void getfollowingsHandler(HttpExchange exchange) throws IOException {
-        String email = extractEmailFromPath(exchange.getRequestURI().getPath());
+        String email = extractFromPath(exchange.getRequestURI().getPath());
 
         try {
             ArrayList<Follow> followings = FollowController.getFollowing(email);
