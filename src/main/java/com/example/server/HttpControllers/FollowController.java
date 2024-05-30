@@ -44,8 +44,8 @@ public class FollowController extends BaseController {
         }
 
         Follow follow = new Follow(0, followerEmail, followedEmail);
-        userDB.increaseFollowers(followerEmail);
-        userDB.increaseFollowings(followedEmail);
+        userDB.increaseFollowers(followedEmail);
+        userDB.increaseFollowings(followerEmail);
         followDB.insertData(follow);
     }
 
@@ -60,8 +60,8 @@ public class FollowController extends BaseController {
         }
 
         Follow follow = followDB.getFollow(followerEmail, followedEmail);
-        userDB.decreaseFollowers(followerEmail);
-        userDB.decreaseFollowings(followedEmail);
+        userDB.decreaseFollowers(followedEmail);
+        userDB.decreaseFollowings(followerEmail);
         followDB.deleteData(follow.getId());
     }
 
