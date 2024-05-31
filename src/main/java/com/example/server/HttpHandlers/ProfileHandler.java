@@ -43,6 +43,10 @@ public class ProfileHandler {
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         User user = gson.fromJson(requestBody, User.class);
+        if (user == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         user.setEmail(requestEmail);
 
         try {
@@ -66,6 +70,10 @@ public class ProfileHandler {
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Skill skill = gson.fromJson(requestBody, Skill.class);
+        if (skill == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         skill.setEmail(requestEmail);
 
         try {
@@ -87,6 +95,10 @@ public class ProfileHandler {
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Education education = gson.fromJson(requestBody, Education.class);
+        if (education == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         education.setEmail(requestEmail);
 
         try {
@@ -136,6 +148,10 @@ public class ProfileHandler {
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Contact contact = gson.fromJson(requestBody, Contact.class);
+        if (contact == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         contact.setEmail(requestEmail);
 
         try {
