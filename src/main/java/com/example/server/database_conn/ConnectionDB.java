@@ -51,8 +51,8 @@ public class ConnectionDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
-    public ArrayList<Connection> getConnectionsBySender(String sender) throws SQLException {
-        String query = "SELECT * FROM connections WHERE sender = ?";
+    public ArrayList<Connection> getSenderNotification(String sender) throws SQLException {
+        String query = "SELECT * FROM connections WHERE sender = ? AND commited = FALSE";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, sender);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -69,18 +69,36 @@ public class ConnectionDB extends BaseDB {
         return connections;
     }
 
-    public List<Connection> getConnectionsByReceiver(String receiver) throws SQLException {
-        String query = "SELECT * FROM connections WHERE receiver = ?";
+    public ArrayList<Connection> getReceiverNotification(String receiver) throws SQLException {
+        String query = "SELECT * FROM connections WHERE receiver = ? AND commited = FALSE";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, receiver);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Connection> connections = new ArrayList<>();
+        ArrayList<Connection> connections = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String sender = resultSet.getString("sender");
             boolean commited = resultSet.getBoolean("commited");
             Connection connection = new Connection(id, sender, receiver, commited);
+            connections.add(connection);
+        }
+
+        return connections;
+    }
+
+    public ArrayList<Connection> getConnections(String email) throws SQLException {
+        String query = "SELECT * FROM connections WHERE receiver = ? AND commited = TRUE";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        ArrayList<Connection> connections = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String sender = resultSet.getString("sender");
+            boolean commited = resultSet.getBoolean("commited");
+            Connection connection = new Connection(id, sender, email, commited);
             connections.add(connection);
         }
 
