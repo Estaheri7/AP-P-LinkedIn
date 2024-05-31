@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ConnectionDB extends BaseDB {
 
@@ -49,6 +48,31 @@ public class ConnectionDB extends BaseDB {
         String query = "DELETE FROM connections";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.executeUpdate();
+    }
+
+    public Connection getConnection(String sender, String receiver) throws SQLException {
+        String query = "SELECT * FROM connections WHERE sender = ? AND receiver = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, sender);
+        preparedStatement.setString(2, receiver);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        if (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            boolean commited = resultSet.getBoolean("commited");
+            return new Connection(id, sender, receiver, commited);
+        }
+
+        return null;
+    }
+
+    public boolean connectionExists(String sender, String receiver) throws SQLException {
+        String query = "SELECT * FROM connections WHERE sender = ? AND receiver = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, sender);
+        preparedStatement.setString(2, receiver);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next();
     }
 
     public ArrayList<Connection> getSenderNotification(String sender) throws SQLException {
@@ -103,6 +127,14 @@ public class ConnectionDB extends BaseDB {
         }
 
         return connections;
+    }
+
+    public void acceptConnection(String sender, String receiver) throws SQLException {
+        String query = "UPDATE connections SET commited = TRUE WHERE sender = ? AND receiver = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, sender);
+        preparedStatement.setString(2, receiver);
+        preparedStatement.executeUpdate();
     }
 
 }
