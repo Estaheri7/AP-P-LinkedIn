@@ -58,4 +58,31 @@ public class ConnectionController extends BaseController {
         connectionDB.insertData(connection);
     }
 
+
+    public static void acceptConnection(String sender, String receiver) throws SQLException {
+        User senderUser = userDB.getUser(sender);
+        User receiverUser = userDB.getUser(receiver);
+        if (senderUser == null || receiverUser == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        Connection connection = connectionDB.getConnection(sender, receiver);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection not found");
+        }
+
+        connectionDB.acceptConnection(sender, receiver);
+        connectionDB.insertData(new Connection(receiver, sender));
+        if (!followDB.isFollowed(sender, receiver)) {
+            followDB.insertData(new Follow(sender, receiver));
+            userDB.increaseFollowers(receiver);
+        }
+        if (!followDB.isFollowed(receiver, sender)) {
+            followDB.insertData(new Follow(receiver, sender));
+            userDB.increaseFollowers(sender);
+        }
+    }
+
+
+
 }
