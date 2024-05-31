@@ -1,5 +1,6 @@
 package com.example.server.HttpControllers;
 
+import com.example.server.CustomExceptions.NotFoundException;
 import com.example.server.DataValidator.ContactValidator;
 import com.example.server.DataValidator.EducationValidator;
 import com.example.server.DataValidator.UserValidator;
@@ -14,10 +15,10 @@ import java.util.ArrayList;
 
 public class ProfileController extends BaseController {
 
-    public static UserProfile getProfile(String email, String viewerEmail) throws SQLException {
+    public static UserProfile getProfile(String email, String viewerEmail) throws SQLException, NotFoundException {
         User user = userDB.getUser(email);
         if (user == null) {
-            return null;
+            throw new NotFoundException("User not found");
         }
 
         Skill skill = skillDB.getSkill(email);
@@ -41,7 +42,7 @@ public class ProfileController extends BaseController {
 
     public static void addEducation(Education education) throws SQLException {
         if (!EducationValidator.isValid(education)) {
-            throw new IllegalArgumentException("School name or Field cannot be empty");
+            throw new IllegalArgumentException("SchoolName or Field cannot be empty");
         }
 
         educationDB.insertData(education);
@@ -49,7 +50,7 @@ public class ProfileController extends BaseController {
 
     public static void updateEducation(Education education) throws SQLException {
         if (!EducationValidator.isValid(education)) {
-            throw new IllegalArgumentException("School name or Field cannot be empty");
+            throw new IllegalArgumentException("SchoolName or Field cannot be empty");
         }
 
         educationDB.updateData(education);
