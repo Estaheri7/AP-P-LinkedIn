@@ -51,13 +51,13 @@ public class ConnectionDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
-    public List<Connection> getConnectionsBySender(String sender) throws SQLException {
+    public ArrayList<Connection> getConnectionsBySender(String sender) throws SQLException {
         String query = "SELECT * FROM connections WHERE sender = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, sender);
         ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<Connection> connections = new ArrayList<>();
+        ArrayList<Connection> connections = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String receiver = resultSet.getString("receiver");
