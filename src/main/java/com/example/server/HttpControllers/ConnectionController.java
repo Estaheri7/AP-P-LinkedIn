@@ -83,6 +83,19 @@ public class ConnectionController extends BaseController {
         }
     }
 
+    public static void declineConnection(String sender, String receiver) throws SQLException {
+        User senderUser = userDB.getUser(sender);
+        User receiverUser = userDB.getUser(receiver);
+        if (senderUser == null || receiverUser == null) {
+            throw new IllegalArgumentException("User not found");
+        }
 
+        Connection connection = connectionDB.getConnection(sender, receiver);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection not found");
+        }
+
+        connectionDB.deleteData(connection.getId());
+    }
 
 }
