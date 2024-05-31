@@ -1,5 +1,6 @@
 package com.example.server.HttpHandlers;
 
+import com.example.server.CustomExceptions.NotFoundException;
 import com.example.server.HttpControllers.ProfileController;
 import com.example.server.HttpControllers.UserController;
 import com.example.server.Server;
@@ -23,11 +24,9 @@ public class ProfileHandler {
 
         try {
             UserProfile userProfile = ProfileController.getProfile(email, viewerEmail);
-            if (userProfile != null) {
-                Server.sendResponse(exchange, 200, gson.toJson(userProfile));
-            } else {
-                Server.sendResponse(exchange, 404, "Not found");
-            }
+            Server.sendResponse(exchange, 200, gson.toJson(userProfile));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -119,6 +118,8 @@ public class ProfileHandler {
             Server.sendResponse(exchange, 200, "Education updated successfully");
         } catch (IllegalArgumentException e) {
             Server.sendResponse(exchange, 400, e.getMessage());
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
