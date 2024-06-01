@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static com.example.server.Server.extractFromPath;
 
@@ -20,6 +21,7 @@ public class MediaHandler {
 
     private static final String AVATARS = "avatars";
     private static final String BACKGROUNDS = "backgrounds";
+    private static final String POST_MEDIA = "post_media";
 
     public static void updateAvatarHandler(HttpExchange exchange) throws IOException {
         String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
@@ -50,6 +52,28 @@ public class MediaHandler {
         try {
             MediaController.updateBackground(requestEmail, createFile(exchange, requestEmail, BACKGROUNDS));
             Server.sendResponse(exchange, 200, "Background changed successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void addMediaToPostHandler(HttpExchange exchange) throws IOException {
+        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
+
+        int postId = Integer.parseInt(queryParams.get("id"));
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
+
+        try {
+            MediaController.addMediaToPost(postId, createFile(exchange, Integer.toString(postId), POST_MEDIA));
+            Server.sendResponse(exchange, 200, "Media added successfully");
         } catch (NotFoundException e) {
             Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
