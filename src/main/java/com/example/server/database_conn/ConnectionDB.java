@@ -20,6 +20,7 @@ public class ConnectionDB extends BaseDB {
                 + "id INT AUTO_INCREMENT PRIMARY KEY,"
                 + "sender VARCHAR(255) NOT NULL,"
                 + "receiver VARCHAR(255) NOT NULL,"
+                + "notes VARCHAR(500),"
                 + "commited BOOLEAN DEFAULT FALSE,"
                 + "FOREIGN KEY (sender) REFERENCES users(email) ON DELETE CASCADE,"
                 + "FOREIGN KEY (receiver) REFERENCES users(email) ON DELETE CASCADE"
@@ -30,10 +31,11 @@ public class ConnectionDB extends BaseDB {
     }
 
     public void insertData(Connection connection) throws SQLException {
-        String query = "INSERT INTO connections(sender, receiver) VALUES (?, ?)";
+        String query = "INSERT INTO connections(sender, receiver, notes) VALUES (?, ?, ?)";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, connection.getSender());
         preparedStatement.setString(2, connection.getReceiver());
+        preparedStatement.setString(3, connection.getNotes());
         preparedStatement.executeUpdate();
     }
 
@@ -60,7 +62,8 @@ public class ConnectionDB extends BaseDB {
         if (resultSet.next()) {
             int id = resultSet.getInt("id");
             boolean commited = resultSet.getBoolean("commited");
-            return new Connection(id, sender, receiver, commited);
+            String notes = resultSet.getString("notes");
+            return new Connection(id, sender, receiver, commited, notes);
         }
 
         return null;
@@ -86,7 +89,8 @@ public class ConnectionDB extends BaseDB {
             int id = resultSet.getInt("id");
             String receiver = resultSet.getString("receiver");
             boolean commited = resultSet.getBoolean("commited");
-            Connection connection = new Connection(id, sender, receiver, commited);
+            String notes = resultSet.getString("notes");
+            Connection connection = new Connection(id, sender, receiver, commited, notes);
             connections.add(connection);
         }
 
@@ -104,7 +108,8 @@ public class ConnectionDB extends BaseDB {
             int id = resultSet.getInt("id");
             String sender = resultSet.getString("sender");
             boolean commited = resultSet.getBoolean("commited");
-            Connection connection = new Connection(id, sender, receiver, commited);
+            String notes = resultSet.getString("notes");
+            Connection connection = new Connection(id, sender, receiver, commited, notes);
             connections.add(connection);
         }
 
@@ -122,7 +127,8 @@ public class ConnectionDB extends BaseDB {
             int id = resultSet.getInt("id");
             String sender = resultSet.getString("sender");
             boolean commited = resultSet.getBoolean("commited");
-            Connection connection = new Connection(id, sender, email, commited);
+            String notes = resultSet.getString("notes");
+            Connection connection = new Connection(id, sender, email, commited, notes);
             connections.add(connection);
         }
 
