@@ -1,4 +1,6 @@
 package com.example.server.HttpControllers;
+import com.example.server.CustomExceptions.DuplicateDataException;
+import com.example.server.CustomExceptions.NotFoundException;
 import com.example.server.database_conn.FollowDB;
 import com.example.server.database_conn.UserDB;
 import com.example.server.models.Follow;
@@ -20,27 +22,35 @@ public class FollowController extends BaseController {
         }
     }
 
-    public static ArrayList<Follow> getFollowers(String email) throws SQLException {
+    public static ArrayList<Follow> getFollowers(String email) throws SQLException, NotFoundException {
         User user = userDB.getUser(email);
         if (user == null) {
-            throw new IllegalArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
         return followDB.getFollowed(email);
     }
 
-    public static ArrayList<Follow> getFollowing(String email) throws SQLException {
+    public static ArrayList<Follow> getFollowing(String email) throws SQLException, NotFoundException {
         User user = userDB.getUser(email);
         if (user == null) {
-            throw new IllegalArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
         return followDB.getFollow(email);
     }
 
-    public static void follow(String followerEmail, String followedEmail) throws SQLException {
+    public static void follow(String followerEmail, String followedEmail) throws SQLException, NotFoundException, DuplicateDataException {
         User follower = userDB.getUser(followerEmail);
         User followed = userDB.getUser(followedEmail);
         if (follower == null || followed == null) {
-            throw new IllegalArgumentException("Invalid follower or followed email");
+            throw new NotFoundException("User not found");
+        }
+
+        if (follower.equals(followed)) {
+            throw new IllegalAccessError("Follower and Followed are the same");
+        }
+
+        if (isFollowed(followerEmail, followedEmail)) {
+            throw new DuplicateDataException("You already followed this user");
         }
 
         Follow follow = new Follow(0, followerEmail, followedEmail);
@@ -49,14 +59,19 @@ public class FollowController extends BaseController {
         followDB.insertData(follow);
     }
 
-    public static void unfollow(String followerEmail, String followedEmail) throws SQLException {
+    public static void unfollow(String followerEmail, String followedEmail) throws SQLException, NotFoundException {
         User follower = userDB.getUser(followerEmail);
         User followed = userDB.getUser(followedEmail);
         if (follower == null || followed == null) {
-            throw new IllegalArgumentException("Invalid follower or followed email");
+            throw new NotFoundException("Invalid follower or followed email");
         }
-        if (!followDB.isFollowed(followerEmail, followedEmail)) {
-            throw new IllegalArgumentException("you have to follow first!");
+
+        if (follower.equals(followed)) {
+            throw new IllegalAccessError("Follower and Followed are the same");
+        }
+
+        if (!isFollowed(followerEmail, followedEmail)) {
+            throw new IllegalAccessError("you have to follow first!");
         }
 
         Follow follow = followDB.getFollow(followerEmail, followedEmail);

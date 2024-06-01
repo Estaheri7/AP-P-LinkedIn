@@ -1,5 +1,7 @@
 package com.example.server.HttpHandlers;
 
+import com.example.server.CustomExceptions.AccountExistsException;
+import com.example.server.CustomExceptions.NotFoundException;
 import com.example.server.HttpControllers.UserController;
 import com.example.server.Server;
 import com.example.server.models.Contact;
@@ -26,7 +28,7 @@ public class UserHandler {
         try {
             UserController.addUser(user);
             Server.sendResponse(exchange, 200, "User added successfully");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | AccountExistsException e) {
             Server.sendResponse(exchange, 400, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
@@ -40,11 +42,9 @@ public class UserHandler {
 
         try {
             User user = UserController.getUser(email);
-            if (user == null) {
-                Server.sendResponse(exchange, 404, "User not found");
-            } else {
-                Server.sendResponse(exchange, 200, gson.toJson(user));
-            }
+            Server.sendResponse(exchange, 200, gson.toJson(user));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -68,11 +68,9 @@ public class UserHandler {
 
         try {
             Skill skill = UserController.getSkill(email);
-            if (skill == null) {
-                Server.sendResponse(exchange, 404, "Skill not found");
-            } else {
-                Server.sendResponse(exchange, 200, gson.toJson(skill));
-            }
+            Server.sendResponse(exchange, 200, gson.toJson(skill));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -85,11 +83,9 @@ public class UserHandler {
 
         try {
             Education education = UserController.getEducation(email);
-            if (education == null) {
-                Server.sendResponse(exchange, 404, "Education not found");
-            } else {
-                Server.sendResponse(exchange, 200, gson.toJson(education));
-            }
+            Server.sendResponse(exchange, 200, gson.toJson(education));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -115,11 +111,9 @@ public class UserHandler {
 
         try {
             Contact contact = UserController.getContact(email, email);
-            if (contact == null) {
-                Server.sendResponse(exchange, 404, "Contact not found");
-            } else {
-                Server.sendResponse(exchange, 200, gson.toJson(contact));
-            }
+            Server.sendResponse(exchange, 200, gson.toJson(contact));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {

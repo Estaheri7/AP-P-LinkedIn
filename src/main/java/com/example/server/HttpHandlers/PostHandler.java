@@ -1,9 +1,10 @@
 package com.example.server.HttpHandlers;
 
+import com.example.server.CustomExceptions.DuplicateDataException;
+import com.example.server.CustomExceptions.NotFoundException;
 import com.example.server.HttpControllers.PostController;
 import com.example.server.HttpControllers.UserController;
 import com.example.server.Server;
-import com.example.server.database_conn.LikeDB;
 import com.example.server.models.Comment;
 import com.example.server.models.Like;
 import com.example.server.models.Post;
@@ -35,18 +36,21 @@ public class PostHandler {
     }
 
     public static void addPostHandler(HttpExchange exchange) throws IOException {
-        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
         String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Post post = gson.fromJson(requestBody, Post.class);
+        if (post == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         post.setAuthor(requestEmail);
 
         try {
-            if (!requestEmail.equals(viewerEmail)) {
-                Server.sendResponse(exchange, 403, "Forbidden request");
-                return;
-            }
             PostController.addPost(post);
             Server.sendResponse(exchange, 200, "Post added");
         } catch (SQLException e) {
@@ -60,18 +64,25 @@ public class PostHandler {
         HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
 
         int id = Integer.parseInt(queryParams.get("id"));
-        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
         String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Post post = gson.fromJson(requestBody, Post.class);
+        if (post == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         post.setId(id);
         post.setAuthor(requestEmail);
 
         try {
             Post postToUpdate = PostController.getPost(id);
-            if (!requestEmail.equals(viewerEmail) || !postToUpdate.equals(post)) {
-                Server.sendResponse(exchange, 403, "Forbidden request");
+            if (!post.equals(postToUpdate)) {
+                Server.sendResponse(exchange, 403, "Permission denied");
                 return;
             }
 
@@ -112,23 +123,28 @@ public class PostHandler {
         HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
 
         int id = Integer.parseInt(queryParams.get("id"));
-        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
         String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Post post = gson.fromJson(requestBody, Post.class);
+        if (post == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         post.setId(id);
         post.setAuthor(requestEmail);
 
         try {
-            Post postToDelete = PostController.getPost(id);
-            if (!requestEmail.equals(viewerEmail) || !postToDelete.equals(post)) {
-                Server.sendResponse(exchange, 403, "Forbidden request");
-                return;
-            }
-
-            PostController.deletePost(id);
+            PostController.deletePost(id, post);
             Server.sendResponse(exchange, 200, "Post deleted successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (IllegalAccessError e) {
+            Server.sendResponse(exchange, 403, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -137,41 +153,23 @@ public class PostHandler {
     }
 
     public static void likePostHandler(HttpExchange exchange) throws IOException {
-        String token = AuthUtil.getTokenFromHeader(exchange);
-        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
-            return;
-        }
-
         String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
-        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+        if (!AuthUtil.authorizeRequest(exchange, viewerEmail)) {
             return;
         }
 
-        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
-        int postId = Integer.parseInt(queryParams.get("id"));
-        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+        int postId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
 
         try {
-            if(PostController.getPost(postId) == null) {
-                Server.sendResponse(exchange, 404, "Post not found");
-                return;
-            }
-
-            if (requestEmail.equals(viewerEmail)) {
-                Server.sendResponse(exchange, 403, "You cannot like your own post");
-                return;
-            }
-
             User user = UserController.getUser(viewerEmail);
-
             Like like = new Like(postId, viewerEmail, user.getFirstName() + " " + user.getLastName());
-            if (PostController.likeExists(like)) {
-                Server.sendResponse(exchange, 403, "Liked already!");
-                return;
-            }
 
             PostController.likePost(like);
             Server.sendResponse(exchange, 200, "Liked post successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (DuplicateDataException e) {
+            Server.sendResponse(exchange, 403, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -180,39 +178,20 @@ public class PostHandler {
     }
 
     public static void dislikePostHandler(HttpExchange exchange) throws IOException {
-        String token = AuthUtil.getTokenFromHeader(exchange);
-        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
-            return;
-        }
-
         String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
-        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+        if (!AuthUtil.authorizeRequest(exchange, viewerEmail)) {
             return;
         }
 
-        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
-        int postId = Integer.parseInt(queryParams.get("id"));
-        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+        int postId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
 
         try {
-            if(PostController.getPost(postId) == null) {
-                Server.sendResponse(exchange, 404, "Post not found");
-                return;
-            }
-
-            if (requestEmail.equals(viewerEmail)) {
-                Server.sendResponse(exchange, 403, "You cannot dislike your own post");
-                return;
-            }
-
             Like like = new Like(postId, viewerEmail);
-            if (!PostController.likeExists(like)) {
-                Server.sendResponse(exchange, 403, "You haven't like yet");
-                return;
-            }
 
-            PostController.dislikePost(postId);
+            PostController.dislikePost(like);
             Server.sendResponse(exchange, 200, "Disliked post successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 403, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -224,13 +203,10 @@ public class PostHandler {
         int postId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
 
         try {
-            Post post = PostController.getPost(postId);
-            if (post == null) {
-                Server.sendResponse(exchange, 404, "Post not found!");
-                return;
-            }
             ArrayList<Like> likes = PostController.getAllLikes(postId);
             Server.sendResponse(exchange, 200, gson.toJson(likes));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -239,33 +215,29 @@ public class PostHandler {
     }
 
     public static void addCommentHandler(HttpExchange exchange) throws IOException {
-        String token = AuthUtil.getTokenFromHeader(exchange);
-        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
-            return;
-        }
-
         String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
-        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+        if (!AuthUtil.authorizeRequest(exchange, viewerEmail)) {
             return;
         }
 
         int postId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Comment comment = gson.fromJson(requestBody, Comment.class);
+        if (comment == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         comment.setPostId(postId);
         comment.setEmail(viewerEmail);
 
         try {
-            Post post = PostController.getPost(postId);
-            if (post == null) {
-                Server.sendResponse(exchange, 404, "Post not found!");
-                return;
-            }
-
             User user = UserController.getUser(viewerEmail);
+
             comment.setUserName(user.getFirstName() + " " + user.getLastName());
             PostController.addCommentToPost(comment);
             Server.sendResponse(exchange, 200, "Comment added successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -274,38 +246,20 @@ public class PostHandler {
     }
 
     public static void removeCommentHandler(HttpExchange exchange) throws IOException {
-        String token = AuthUtil.getTokenFromHeader(exchange);
-        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
-            return;
-        }
-
         String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
-        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+        if (!AuthUtil.authorizeRequest(exchange, viewerEmail)) {
             return;
         }
 
         int commentId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
 
         try {
-            Comment comment = PostController.getComment(commentId);
-            if (comment == null || PostController.commentExists(comment)) {
-                Server.sendResponse(exchange, 404, "Comment not found");
-                return;
-            }
-
-            Post post = PostController.getPost(comment.getPostId());
-            if (post == null) {
-                Server.sendResponse(exchange, 404, "Post not found!");
-                return;
-            }
-
-            if (!comment.getEmail().equals(viewerEmail)) {
-                Server.sendResponse(exchange, 403, "This is not your comment");
-                return;
-            }
-
-            PostController.deleteCommentFromPost(commentId, comment.getPostId());
+            PostController.deleteCommentFromPost(commentId, viewerEmail);
             Server.sendResponse(exchange, 200, "Comment deleted successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (IllegalAccessError e) {
+            Server.sendResponse(exchange, 403, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -314,13 +268,8 @@ public class PostHandler {
     }
 
     public static void updateCommentHandler(HttpExchange exchange) throws IOException {
-        String token = AuthUtil.getTokenFromHeader(exchange);
-        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
-            return;
-        }
-
         String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
-        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+        if (!AuthUtil.authorizeRequest(exchange, viewerEmail)) {
             return;
         }
 
@@ -328,28 +277,19 @@ public class PostHandler {
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Comment updateComment = gson.fromJson(requestBody, Comment.class);
+        if (updateComment == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
+        updateComment.setEmail(viewerEmail);
 
         try {
-            Comment comment = PostController.getComment(commentId);
-            if (comment == null || PostController.commentExists(comment)) {
-                Server.sendResponse(exchange, 404, "Comment not found");
-                return;
-            }
-
-            Post post = PostController.getPost(comment.getPostId());
-            if (post == null) {
-                Server.sendResponse(exchange, 404, "Post not found!");
-                return;
-            }
-
-            if (!comment.getEmail().equals(viewerEmail)) {
-                Server.sendResponse(exchange, 403, "This is not your comment");
-                return;
-            }
-
-            comment.setComment(updateComment.getComment());
-            PostController.updateComment(comment);
+            PostController.updateComment(commentId , updateComment);
             Server.sendResponse(exchange, 200, "Comment updated successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (IllegalAccessError e) {
+            Server.sendResponse(exchange, 403, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -361,14 +301,10 @@ public class PostHandler {
         int postId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
 
         try {
-            Post post = PostController.getPost(postId);
-            if (post == null) {
-                Server.sendResponse(exchange, 404, "Post not found!");
-                return;
-            }
-
             ArrayList<Comment> comments = PostController.getAllComments(postId);
             Server.sendResponse(exchange, 200, gson.toJson(comments));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {

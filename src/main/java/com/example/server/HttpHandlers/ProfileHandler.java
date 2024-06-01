@@ -1,5 +1,6 @@
 package com.example.server.HttpHandlers;
 
+import com.example.server.CustomExceptions.NotFoundException;
 import com.example.server.HttpControllers.ProfileController;
 import com.example.server.HttpControllers.UserController;
 import com.example.server.Server;
@@ -23,11 +24,9 @@ public class ProfileHandler {
 
         try {
             UserProfile userProfile = ProfileController.getProfile(email, viewerEmail);
-            if (userProfile != null) {
-                Server.sendResponse(exchange, 200, gson.toJson(userProfile));
-            } else {
-                Server.sendResponse(exchange, 404, "Not found");
-            }
+            Server.sendResponse(exchange, 200, gson.toJson(userProfile));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -44,6 +43,10 @@ public class ProfileHandler {
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         User user = gson.fromJson(requestBody, User.class);
+        if (user == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         user.setEmail(requestEmail);
 
         try {
@@ -67,6 +70,10 @@ public class ProfileHandler {
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Skill skill = gson.fromJson(requestBody, Skill.class);
+        if (skill == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         skill.setEmail(requestEmail);
 
         try {
@@ -88,6 +95,10 @@ public class ProfileHandler {
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Education education = gson.fromJson(requestBody, Education.class);
+        if (education == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         education.setEmail(requestEmail);
 
         try {
@@ -119,6 +130,8 @@ public class ProfileHandler {
             Server.sendResponse(exchange, 200, "Education updated successfully");
         } catch (IllegalArgumentException e) {
             Server.sendResponse(exchange, 400, e.getMessage());
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -135,6 +148,10 @@ public class ProfileHandler {
 
         String requestBody = new String(exchange.getRequestBody().readAllBytes());
         Contact contact = gson.fromJson(requestBody, Contact.class);
+        if (contact == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+            return;
+        }
         contact.setEmail(requestEmail);
 
         try {
