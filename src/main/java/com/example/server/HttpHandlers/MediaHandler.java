@@ -19,6 +19,7 @@ import static com.example.server.Server.extractFromPath;
 public class MediaHandler {
 
     private static final String AVATARS = "avatars";
+    private static final String BACKGROUNDS = "backgrounds";
 
     public static void updateAvatarHandler(HttpExchange exchange) throws IOException {
         String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
@@ -30,6 +31,25 @@ public class MediaHandler {
         try {
             MediaController.updateAvatar(requestEmail, createFile(exchange, requestEmail, AVATARS));
             Server.sendResponse(exchange, 200, "Avatar changed successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void updateBackgroundHandler(HttpExchange exchange) throws IOException {
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
+
+        try {
+            MediaController.updateBackground(requestEmail, createFile(exchange, requestEmail, BACKGROUNDS));
+            Server.sendResponse(exchange, 200, "Background changed successfully");
         } catch (NotFoundException e) {
             Server.sendResponse(exchange, 404, e.getMessage());
         } catch (SQLException e) {
