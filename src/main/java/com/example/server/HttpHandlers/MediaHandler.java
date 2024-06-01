@@ -20,6 +20,24 @@ public class MediaHandler {
 
     private static final String AVATARS = "avatars";
 
+    public static void updateAvatarHandler(HttpExchange exchange) throws IOException {
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, requestEmail)) {
+            return;
+        }
+
+        try {
+            MediaController.updateAvatar(requestEmail, createFile(exchange, requestEmail, AVATARS));
+            Server.sendResponse(exchange, 200, "Avatar changed successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
 
     private static String createFile(HttpExchange exchange, String unique, String directory) throws IOException {
         try {
