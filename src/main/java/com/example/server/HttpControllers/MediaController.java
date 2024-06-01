@@ -11,4 +11,11 @@ public class MediaController extends BaseController {
         }
         userDB.uploadAvatar(email, fileUrl);
     }
+
+    public static void updateBackground(String email, String fileUrl) throws SQLException, NotFoundException {
+        if (userDB.getUser(email) == null) {
+            throw new NotFoundException("User not found");
+        }
+        userDB.uploadBackground(email, fileUrl);
+    }
 }
