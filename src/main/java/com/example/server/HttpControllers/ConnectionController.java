@@ -47,14 +47,21 @@ public class ConnectionController extends BaseController {
         return connectionDB.getReceiverNotification(email);
     }
 
-    public static void sendConnection(String sender, String receiver) throws SQLException {
+    public static void sendConnection(String sender, String receiver, String notes) throws SQLException {
         User senderUser = userDB.getUser(sender);
         User receiverUser = userDB.getUser(receiver);
         if (senderUser == null || receiverUser == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        Connection connection = new Connection(sender, receiver);
+        if (connectionDB.connectionExists(receiver, sender)) {
+            throw new IllegalArgumentException("This connection is still pending...");
+        }
+
+        Connection connection = new Connection(sender, receiver, notes);
+        if (isConnected(connection)) {
+            throw new IllegalArgumentException("You sent connection request to this user before");
+        }
         connectionDB.insertData(connection);
     }
 
@@ -76,10 +83,12 @@ public class ConnectionController extends BaseController {
         if (!followDB.isFollowed(sender, receiver)) {
             followDB.insertData(new Follow(sender, receiver));
             userDB.increaseFollowers(receiver);
+            userDB.decreaseFollowings(sender);
         }
         if (!followDB.isFollowed(receiver, sender)) {
             followDB.insertData(new Follow(receiver, sender));
             userDB.increaseFollowers(sender);
+            userDB.increaseFollowings(receiver);
         }
     }
 
@@ -96,6 +105,10 @@ public class ConnectionController extends BaseController {
         }
 
         connectionDB.deleteData(connection.getId());
+    }
+
+    public static boolean isConnected(Connection connection) throws SQLException {
+        return connectionDB.connectionExists(connection.getSender(), connection.getReceiver());
     }
 
 }
