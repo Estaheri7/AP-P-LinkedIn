@@ -1,5 +1,6 @@
 package com.example.server.Router;
 
+import com.example.server.HttpControllers.MediaController;
 import com.example.server.HttpHandlers.*;
 import com.example.server.Server;
 
@@ -19,6 +20,9 @@ public class Router {
         // get all educations
         server.get("/user/educations", UserHandler::getAllEducationHandler);
         server.get("/user/contact", UserHandler::getContactHandler);
+        // by email
+        server.put("/upload-avatar", MediaHandler::updateAvatarHandler);
+        server.put("/upload-background", MediaHandler::updateBackgroundHandler);
 
         // by email
         server.get("/profile", ProfileHandler::getProfileHandler);
@@ -38,10 +42,11 @@ public class Router {
         // by email
         server.get("/posts", PostHandler::getPostHandler);
         server.post("/posts/add", PostHandler::addPostHandler);
+        server.put("/posts/add-media", MediaHandler::addMediaToPostHandler);
         server.put("/posts/update", PostHandler::updatePostHandler);
         server.delete("/posts/delete", PostHandler::deletePostHandler);
 
-        // email and id
+        // by postId
         server.put("/posts/like", PostHandler::likePostHandler);
         server.put("/posts/dislike", PostHandler::dislikePostHandler);
 
@@ -58,7 +63,7 @@ public class Router {
 
         // by email
         server.get("/followers", FollowHandler::getFollowersHandler);
-        server.get("/followings", FollowHandler::getfollowingsHandler);
+        server.get("/followings", FollowHandler::getFollowingsHandler);
         // by email
         server.put("/follow", FollowHandler::followHandler);
         server.put("/unfollow", FollowHandler::unfollowHandler);
