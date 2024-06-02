@@ -53,6 +53,8 @@ public class PostHandler {
         try {
             PostController.addPost(post);
             Server.sendResponse(exchange, 200, "Post added");
+        } catch (IllegalArgumentException e) {
+            Server.sendResponse(exchange, 400, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {

@@ -2,6 +2,7 @@ package com.example.server.HttpControllers;
 
 import com.example.server.CustomExceptions.DuplicateDataException;
 import com.example.server.CustomExceptions.NotFoundException;
+import com.example.server.DataValidator.PostValidator;
 import com.example.server.database_conn.CommentDB;
 import com.example.server.database_conn.LikeDB;
 import com.example.server.database_conn.PostDB;
@@ -33,10 +34,18 @@ public class PostController extends BaseController {
     }
 
     public static void addPost(Post post) throws SQLException {
+        if (!PostValidator.isValid(post)) {
+            throw new IllegalArgumentException("Invalid title");
+        }
+
         postDB.insertData(post);
     }
 
     public static void updatePost(Post post) throws SQLException {
+        if (!PostValidator.isValid(post)) {
+            throw new IllegalArgumentException("Invalid title");
+        }
+
         postDB.updateData(post);
     }
 
