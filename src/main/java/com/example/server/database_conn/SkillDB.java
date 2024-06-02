@@ -23,7 +23,7 @@ public class SkillDB extends BaseDB {
                 + "skill_3 VARCHAR(40),"
                 + "skill_4 VARCHAR(40),"
                 + "skill_5 VARCHAR(40),"
-                + "FOREIGN KEY (email) REFERENCES users(email) ON DELETE CASCADE"
+                + "FOREIGN KEY (email) REFERENCES users(email) ON DELETE CASCADE ON UPDATE CASCADE"
                 + ");";
 
         Statement statement = conn.createStatement();

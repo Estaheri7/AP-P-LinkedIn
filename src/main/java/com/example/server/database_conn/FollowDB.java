@@ -21,8 +21,8 @@ public class FollowDB extends BaseDB {
                 + "id INT AUTO_INCREMENT PRIMARY KEY,"
                 + "follower VARCHAR(255) NOT NULL,"
                 + "followed VARCHAR(255) NOT NULL,"
-                + "FOREIGN KEY (follower) REFERENCES users(email) ON DELETE CASCADE,"
-                + "FOREIGN KEY (followed) REFERENCES users(email) ON DELETE CASCADE"
+                + "FOREIGN KEY (follower) REFERENCES users(email) ON DELETE CASCADE ON UPDATE CASCADE,"
+                + "FOREIGN KEY (followed) REFERENCES users(email) ON DELETE CASCADE ON UPDATE CASCADE"
                 + ");";
 
         Statement statement = conn.createStatement();
