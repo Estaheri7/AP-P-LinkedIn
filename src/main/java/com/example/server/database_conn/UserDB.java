@@ -199,4 +199,20 @@ public class UserDB extends BaseDB {
         preparedStatement.setString(1, email);
         preparedStatement.executeUpdate();
     }
+
+    public void uploadAvatar(String email, String fileUrl) throws SQLException {
+        String query = "UPDATE users SET avatar_url = ? WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, fileUrl);
+        preparedStatement.setString(2, email);
+        preparedStatement.executeUpdate();
+    }
+
+    public void uploadBackground(String email, String fileUrl) throws SQLException {
+        String query = "UPDATE users SET background_url = ? WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, fileUrl);
+        preparedStatement.setString(2, email);
+        preparedStatement.executeUpdate();
+    }
 }

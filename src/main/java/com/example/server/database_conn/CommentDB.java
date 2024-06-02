@@ -21,8 +21,8 @@ public class CommentDB extends BaseDB {
                 + "userName VARCHAR(255) NOT NULL,"
                 + "comment_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
                 + "message VARCHAR(1250) NOT NULL,"
-                + "FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,"
-                + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE"
+                + "FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE ON UPDATE CASCADE,"
+                + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE ON UPDATE CASCADE"
                 + ");";
 
         Statement statement = conn.createStatement();

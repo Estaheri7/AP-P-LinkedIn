@@ -25,7 +25,7 @@ public class EducationDB extends BaseDB {
                 + "end_date DATE,"
                 + "community VARCHAR(500),"
                 + "description VARCHAR(1000),"
-                + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE"
+                + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE ON UPDATE CASCADE"
                 + ");";
 
         Statement statement = conn.createStatement();

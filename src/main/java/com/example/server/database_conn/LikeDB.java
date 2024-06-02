@@ -20,8 +20,8 @@ public class LikeDB extends BaseDB {
                 + "email VARCHAR(255) NOT NULL,"
                 + "userName VARCHAR(255) NOT NULL,"
                 + "like_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
-                + "FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,"
-                + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE"
+                + "FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE ON UPDATE CASCADE,"
+                + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE ON UPDATE CASCADE"
                 + ");";
 
         Statement statement = conn.createStatement();

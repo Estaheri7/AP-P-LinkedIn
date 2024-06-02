@@ -24,7 +24,7 @@ public class ContactDB extends BaseDB {
                 + "birth_date DATE,"
                 + "fast_connect VARCHAR(40),"
                 + "visibility VARCHAR(40) NOT NULL DEFAULT 'private',"
-                + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE"
+                + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE ON UPDATE CASCADE"
                 + ");";
 
         Statement statement = conn.createStatement();

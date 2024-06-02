@@ -20,10 +20,11 @@ public class PostDB extends BaseDB {
                 + "email VARCHAR(255) NOT NULL,"
                 + "title VARCHAR(255) NOT NULL,"
                 + "content VARCHAR(3000) NOT NULL,"
+                + "mediaUrl VARCHAR(255),"
                 + "created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"
                 + "likes INT NOT NULL DEFAULT 0,"
                 + "comments INT NOT NULL DEFAULT 0,"
-                + "FOREIGN KEY(email) REFERENCES users (email) ON DELETE CASCADE"
+                + "FOREIGN KEY(email) REFERENCES users (email) ON DELETE CASCADE ON UPDATE CASCADE"
                 + ");";
 
         Statement statement = conn.createStatement();
@@ -72,11 +73,12 @@ public class PostDB extends BaseDB {
             String author = resultSet.getString("email");
             String title = resultSet.getString("title");
             String content = resultSet.getString("content");
+            String mediaURL = resultSet.getString("mediaUrl");
             Timestamp createdAt = resultSet.getTimestamp("created_at");
             int likes = resultSet.getInt("likes");
             int comments = resultSet.getInt("comments");
 
-            return new Post(postId, author, title, content, createdAt, likes, comments);
+            return new Post(postId, author, title, content, mediaURL, createdAt, likes, comments);
         }
 
         return null;
@@ -95,15 +97,24 @@ public class PostDB extends BaseDB {
             String author = resultSet.getString("email");
             String title = resultSet.getString("title");
             String content = resultSet.getString("content");
+            String mediaURL = resultSet.getString("mediaUrl");
             Timestamp createdAt = resultSet.getTimestamp("created_at");
             int likes = resultSet.getInt("likes");
             int comments = resultSet.getInt("comments");
 
-            Post post = new Post(postId, author, title, content, createdAt, likes, comments);
+            Post post = new Post(postId, author, title, content, mediaURL, createdAt, likes, comments);
             posts.add(post);
         }
 
         return posts;
+    }
+
+    public void addMedia(int id, String mediaUrl) throws SQLException {
+        String query = "UPDATE posts SET mediaUrl=? WHERE id=?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, mediaUrl);
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
     }
 
     public ArrayList<Post> getAllPosts() throws SQLException {
@@ -117,11 +128,12 @@ public class PostDB extends BaseDB {
             String author = resultSet.getString("email");
             String title = resultSet.getString("title");
             String content = resultSet.getString("content");
+            String mediaURL = resultSet.getString("mediaUrl");
             Timestamp createdAt = resultSet.getTimestamp("created_at");
             int likes = resultSet.getInt("likes");
             int comments = resultSet.getInt("comments");
 
-            Post post = new Post(postId, author, title, content, createdAt, likes, comments);
+            Post post = new Post(postId, author, title, content, mediaURL, createdAt, likes, comments);
 
             posts.add(post);
         }

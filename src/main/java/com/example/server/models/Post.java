@@ -7,6 +7,7 @@ public class Post {
     private String author;
     private String title;
     private String content;
+    private String mediaUrl;
     private Timestamp createdAt;
     private int likes;
     private int comments;
@@ -22,6 +23,17 @@ public class Post {
         this.author = author;
         this.title = title;
         this.content = content;
+        this.createdAt = createdAt;
+        this.likes = likes;
+        this.comments = comments;
+    }
+
+    public Post(int id, String author, String title, String content, String mediaUrl, Timestamp createdAt, int likes, int comments) {
+        this.id = id;
+        this.author = author;
+        this.title = title;
+        this.content = content;
+        this.mediaUrl = mediaUrl;
         this.createdAt = createdAt;
         this.likes = likes;
         this.comments = comments;
@@ -65,6 +77,15 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        this.mediaUrl = mediaUrl;
     }
 
     public Timestamp getCreatedAt() {
