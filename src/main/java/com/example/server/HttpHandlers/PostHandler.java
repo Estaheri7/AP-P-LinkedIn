@@ -90,6 +90,8 @@ public class PostHandler {
 
             PostController.updatePost(post);
             Server.sendResponse(exchange, 200, "Post updated");
+        } catch (IllegalArgumentException e) {
+            Server.sendResponse(exchange, 400, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
