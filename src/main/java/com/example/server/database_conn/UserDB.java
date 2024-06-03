@@ -186,6 +186,13 @@ public class UserDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
+    public void increaseConnections(String email) throws SQLException {
+        String query = "UPDATE users SET connections = connections + 1 WHERE email = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        preparedStatement.executeUpdate();
+    }
+
     public void decreaseFollowers(String email) throws SQLException {
         String query = "UPDATE users SET followers = followers - 1 WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);

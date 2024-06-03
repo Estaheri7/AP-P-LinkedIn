@@ -68,7 +68,15 @@ public class Router {
         server.put("/follow", FollowHandler::followHandler);
         server.put("/unfollow", FollowHandler::unfollowHandler);
 
-        server.post("/send-connect", ConnectionHandler::sendConnectionHandler);
+        // by email
         server.get("/connections", ConnectionHandler::getConnectionsHandler);
+        server.get("/connections/receiver", ConnectionHandler::getReceiverNotificationHandler);
+        server.get("/connections/sender", ConnectionHandler::getSenderNotificationHandler);
+        server.post("/send-connect", ConnectionHandler::sendConnectionHandler);
+
+        // by receiver email and sender query email
+        server.put("/accept-connection", ConnectionHandler::acceptConnectionHandler);
+        server.delete("/decline-connection", ConnectionHandler::declineConnectionHandler);
+
     }
 }
