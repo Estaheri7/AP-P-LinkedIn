@@ -34,8 +34,8 @@ public class Router {
         server.put("/profile/update/education", ProfileHandler::educationUpdateHandler);
         server.put("/profile/update/contact", ProfileHandler::contactUpdateHandler);
 
-        // by name-lastName
-        server.get("/search", SearchHandler::searchByName);
+        // by query
+        server.get("/search", SearchHandler::searchHandler);
 
         // All posts
         server.get("/posts/feeds", PostHandler::showAllPosts);
