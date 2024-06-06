@@ -12,7 +12,7 @@ import java.util.List;
 
 public class FollowController extends BaseController {
 
-    private static FollowDB followDB;
+    private static final FollowDB followDB;
 
     static {
         try {
