@@ -5,6 +5,7 @@ import com.example.server.CustomExceptions.NotFoundException;
 import com.example.server.HttpControllers.MediaController;
 import com.example.server.Server;
 import com.example.server.utils.AuthUtil;
+import com.example.server.utils.JwtUtil;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.File;
@@ -22,6 +23,7 @@ public class MediaHandler {
     private static final String AVATARS = "avatars";
     private static final String BACKGROUNDS = "backgrounds";
     private static final String POST_MEDIA = "post_media";
+    private static final String CHAT_MEDIA = "chat_media";
 
     public static void updateAvatarHandler(HttpExchange exchange) throws IOException {
         String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
@@ -76,6 +78,33 @@ public class MediaHandler {
             Server.sendResponse(exchange, 200, "Media added successfully");
         } catch (NotFoundException e) {
             Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void sendMediaChatHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        String sender = JwtUtil.parseToken(token);
+        String receiver = extractFromPath(exchange.getRequestURI().getPath());
+        if (!AuthUtil.isUserAuthorized(exchange, token, sender)) {
+            return;
+        }
+
+        try {
+            String unique = sender + "_to_" + receiver;
+            MediaController.sendMediaInChat(sender, receiver, createFile(exchange, unique, CHAT_MEDIA));
+            Server.sendResponse(exchange, 200, "File sent successfully");
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            Server.sendResponse(exchange, 400, e.getMessage());
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {

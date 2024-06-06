@@ -78,5 +78,8 @@ public class Router {
         server.put("/accept-connection", ConnectionHandler::acceptConnectionHandler);
         server.delete("/decline-connection", ConnectionHandler::declineConnectionHandler);
 
+        server.get("/chats", ChatHandler::displayChatHandler);
+        server.post("/send-message", ChatHandler::sendMessageHandler);
+        server.post("/send-file", MediaHandler::sendMediaChatHandler);
     }
 }
