@@ -2,9 +2,8 @@ package com.example.server.database_conn;
 
 import com.example.server.models.Chat;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class ChatDB extends BaseDB {
 
@@ -49,5 +48,28 @@ public class ChatDB extends BaseDB {
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setInt(1, id);
         preparedStatement.executeUpdate();
+    }
+
+    public ArrayList<Chat> getChats(String sender, String receiver) throws SQLException {
+        String query = "SELECT * FROM chat WHERE (sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) ORDER BY timestamp ASC";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, sender);
+        preparedStatement.setString(2, receiver);
+        preparedStatement.setString(3, receiver);
+        preparedStatement.setString(4, sender);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        ArrayList<Chat> chats = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String senderUser = resultSet.getString("sender");
+            String receiverUser = resultSet.getString("receiver");
+            String message = resultSet.getString("message");
+            Timestamp timestamp = resultSet.getTimestamp("timestamp");
+
+            Chat chat = new Chat(id, senderUser, receiverUser, message, timestamp);
+            chats.add(chat);
+        }
+        return chats;
     }
 }
