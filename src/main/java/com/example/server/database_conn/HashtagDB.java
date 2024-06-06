@@ -71,4 +71,20 @@ public class HashtagDB extends BaseDB {
 
         return hashtags;
     }
+
+    public ArrayList<Hashtag> getHashtag(String hashtag) throws SQLException {
+        String query = "SELECT * FROM hashtags WHERE hashtag = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, hashtag);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        ArrayList<Hashtag> hashtags = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            int postId = resultSet.getInt("post_id");
+            Hashtag searchedHashtag = new Hashtag(id, postId, hashtag);
+            hashtags.add(searchedHashtag);
+        }
+        return hashtags;
+    }
 }
