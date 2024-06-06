@@ -26,6 +26,24 @@ public class ChatController extends BaseController {
             throw new NotFoundException("User not found");
         }
 
+        if (chat.getSender().equals(chat.getReceiver())) {
+            throw new IllegalAccessError("Sender and Receiver are the same");
+        }
+
         chatDB.insertData(chat);
+    }
+
+    public static ArrayList<Chat> displayChat(String sender, String receiver) throws SQLException, NotFoundException {
+        User senderUser = userDB.getUser(sender);
+        User receiverUser = userDB.getUser(receiver);
+        if (senderUser == null || receiverUser == null) {
+            throw new NotFoundException("User not found");
+        }
+
+        if (sender.equals(receiver)) {
+            throw new IllegalAccessError("Sender and Receiver are the same");
+        }
+
+        return chatDB.getChats(sender, receiver);
     }
 }
