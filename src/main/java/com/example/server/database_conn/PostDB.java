@@ -1,5 +1,6 @@
 package com.example.server.database_conn;
 
+import com.example.server.models.Hashtag;
 import com.example.server.models.Like;
 import com.example.server.models.Post;
 
@@ -8,9 +9,10 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class PostDB extends BaseDB {
+    private final HashtagDB hashtagDB;
 
     public PostDB() throws SQLException {
-
+        this.hashtagDB = new HashtagDB();
     }
 
     @Override
@@ -33,11 +35,22 @@ public class PostDB extends BaseDB {
 
     public void insertData(Post post) throws SQLException {
         String query = "INSERT INTO posts (email, title, content) VALUES (?, ?, ?)";
-        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        PreparedStatement preparedStatement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, post.getAuthor());
         preparedStatement.setString(2, post.getTitle());
         preparedStatement.setString(3, post.getContent());
         preparedStatement.executeUpdate();
+
+        ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+        int postId = -1;
+        if (generatedKeys.next()) {
+            postId = generatedKeys.getInt(1);
+        }
+
+        ArrayList<String> hashtags = Hashtag.extractHashtag(post.getContent());
+        for (String hashtag : hashtags) {
+            hashtagDB.insertData(new Hashtag(postId, hashtag));
+        }
     }
 
     public void updateData(Post post) throws SQLException {
