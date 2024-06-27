@@ -1,5 +1,6 @@
 package com.example.server.database_conn;
 
+import com.example.server.models.Connection;
 import com.example.server.models.Contact;
 import com.example.server.models.Education;
 
@@ -23,7 +24,7 @@ public class ContactDB extends BaseDB {
                 + "address VARCHAR(220),"
                 + "birth_date DATE,"
                 + "fast_connect VARCHAR(40),"
-                + "visibility VARCHAR(40) NOT NULL DEFAULT 'private',"
+                + "visibility VARCHAR(40) NOT NULL DEFAULT 'only_me',"
                 + "FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE ON UPDATE CASCADE"
                 + ");";
 
@@ -81,15 +82,26 @@ public class ContactDB extends BaseDB {
         ResultSet resultSet = preparedStatement.executeQuery();
 
         if (resultSet.next()) {
+            Date birthDate = null;
             int id = resultSet.getInt("id");
             String viewLink = resultSet.getString("view_link");
             String phoneNumber = resultSet.getString("phone_number");
             String address = resultSet.getString("address");
-            Date birthDate = resultSet.getDate("birth_date");
             String fastConnect = resultSet.getString("fast_connect");
             String visibility = resultSet.getString("visibility");
-            if (visibility.equals(Contact.PRIVATE) && !email.equals(viewerEmail)) {
-                birthDate = null;
+
+            ConnectionDB connection = new ConnectionDB();
+            boolean flag = false;
+            flag = connection.connectionExists(email, viewerEmail) && connection.connectionExists(viewerEmail, email);
+
+            if (visibility.equals(Contact.ONLY_ME) && !email.equals(viewerEmail)) {
+                birthDate = new Date(0);
+            } else if (visibility.equals(Contact.MY_CONNECTIONS) && flag) {
+                birthDate = resultSet.getDate("birth_date");
+            } else if (visibility.equals(Contact.ONLY_ME)) {
+                birthDate = resultSet.getDate("birth_date");
+            } else if (visibility.equals(Contact.EVERYONE)) {
+                birthDate = resultSet.getDate("birth_date");
             }
 
             return new Contact(id, email, viewLink, phoneNumber, address, birthDate, fastConnect, visibility);

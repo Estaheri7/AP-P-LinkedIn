@@ -19,4 +19,9 @@ public class UserValidator {
         return nameValidator(user.getFirstName()) && nameValidator(user.getLastName())
                 && emailValidator(user.getEmail()) && passwordValidator(user.getPassword());
     }
+
+    public static boolean validationWithoutPassword(User user) {
+        return nameValidator(user.getFirstName()) && nameValidator(user.getLastName())
+                && emailValidator(user.getEmail());
+    }
 }

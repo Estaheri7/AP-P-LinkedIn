@@ -5,6 +5,7 @@ import com.example.server.database_conn.*;
 import com.example.server.models.Chat;
 import com.example.server.models.User;
 
+import java.io.File;
 import java.sql.SQLException;
 
 public class MediaController extends BaseController {
@@ -18,6 +19,35 @@ public class MediaController extends BaseController {
             chatDB = new ChatDB();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static final String AVATARS = "avatars";
+    public static final String BACKGROUNDS = "backgrounds";
+    public static final String POST_MEDIA = "post_media";
+    public static final String CHAT_MEDIA = "chat_media";
+
+    public static File getAvatar(String email) throws NotFoundException {
+        File avatarJPG = new File(AVATARS + "/" + email + ".jpg");
+        File avatarPNG = new File(AVATARS + "/" + email + ".png");
+        if (avatarJPG.exists()) {
+            return avatarJPG;
+        } else if (avatarPNG.exists()) {
+            return avatarPNG;
+        } else {
+            throw new NotFoundException("Avatar not found for email: " + email);
+        }
+    }
+
+    public static File getBackground(String email) throws NotFoundException {
+        File backgroundJPG = new File(BACKGROUNDS + "/" + email + ".jpg");
+        File backgroundPNG = new File(BACKGROUNDS + "/" + email + ".png");
+        if (backgroundJPG.exists()) {
+            return backgroundJPG;
+        } else if (backgroundPNG.exists()) {
+            return backgroundPNG;
+        } else {
+            throw new NotFoundException("Background not found for email: " + email);
         }
     }
 

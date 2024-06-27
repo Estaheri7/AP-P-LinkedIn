@@ -29,7 +29,7 @@ public class ProfileController extends BaseController {
     }
 
     public static void updateUser(User user) throws SQLException {
-        if (!UserValidator.isValid(user)) {
+        if (!UserValidator.validationWithoutPassword(user)) {
             throw new IllegalArgumentException("Invalid data format");
         }
 
@@ -62,5 +62,9 @@ public class ProfileController extends BaseController {
         }
 
         contactDB.updateData(contact);
+    }
+
+    public static void updateVisibility(String email, String visibility) throws SQLException {
+        contactDB.changeVisibility(email, visibility);
     }
 }

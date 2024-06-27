@@ -14,7 +14,7 @@ public class Contact {
 
     public static String ONLY_ME = "only_me";
     public static String MY_CONNECTIONS = "my_connections";
-    public static String PRIVATE = "private";
+    public static String EVERYONE = "everyone";
 
     public Contact(String email, String viewLink, String phoneNumber) {
         this.email = email;

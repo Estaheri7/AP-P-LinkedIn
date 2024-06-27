@@ -1,6 +1,7 @@
 package com.example.server.Router;
 
 import com.example.server.HttpControllers.MediaController;
+import com.example.server.HttpControllers.ProfileController;
 import com.example.server.HttpHandlers.*;
 import com.example.server.Server;
 
@@ -21,6 +22,8 @@ public class Router {
         server.get("/user/educations", UserHandler::getAllEducationHandler);
         server.get("/user/contact", UserHandler::getContactHandler);
         // by email
+        server.get("/user/avatar", MediaHandler::getAvatarHandler);
+        server.get("/user/background", MediaHandler::getBackgroundHandler);
         server.put("/upload-avatar", MediaHandler::updateAvatarHandler);
         server.put("/upload-background", MediaHandler::updateBackgroundHandler);
 
@@ -33,6 +36,7 @@ public class Router {
         server.post("/profile/add/education", ProfileHandler::addEducationHandler);
         server.put("/profile/update/education", ProfileHandler::educationUpdateHandler);
         server.put("/profile/update/contact", ProfileHandler::contactUpdateHandler);
+        server.put("/profile/contact/visibility", ProfileHandler::changeVisibilityHandler);
 
         // by query
         server.get("/search", SearchHandler::searchHandler);

@@ -12,6 +12,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import static com.example.server.Server.extractFromPath;
 
@@ -159,6 +160,28 @@ public class ProfileHandler {
             Server.sendResponse(exchange, 200, "Contact updated successfully");
         } catch (IllegalArgumentException e) {
             Server.sendResponse(exchange, 400, e.getMessage());
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void changeVisibilityHandler(HttpExchange exchange) throws IOException {
+        String email = extractFromPath(exchange.getRequestURI().getPath());
+        if (!AuthUtil.authorizeRequest(exchange, email)) {
+            return;
+        }
+
+        String requestBody = new String(exchange.getRequestBody().readAllBytes());
+        HashMap<String, String> visiblityHashMap = gson.fromJson(requestBody, HashMap.class);
+        if (visiblityHashMap == null) {
+            Server.sendResponse(exchange, 404, "Invalid request");
+        }
+
+        try {
+            ProfileController.updateVisibility(email, visiblityHashMap.get("visibility"));
+            Server.sendResponse(exchange, 200, "Visibility updated successfully");
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {

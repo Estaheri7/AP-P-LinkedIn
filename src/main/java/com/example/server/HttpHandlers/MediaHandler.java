@@ -8,10 +8,7 @@ import com.example.server.utils.AuthUtil;
 import com.example.server.utils.JwtUtil;
 import com.sun.net.httpserver.HttpExchange;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,10 +17,41 @@ import static com.example.server.Server.extractFromPath;
 
 public class MediaHandler {
 
-    private static final String AVATARS = "avatars";
-    private static final String BACKGROUNDS = "backgrounds";
-    private static final String POST_MEDIA = "post_media";
-    private static final String CHAT_MEDIA = "chat_media";
+    public static void getAvatarHandler(HttpExchange exchange) throws IOException {
+        String email = extractFromPath(exchange.getRequestURI().getPath());
+
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        try {
+            File avatar = MediaController.getAvatar(email);
+            sendFileResponse(exchange, avatar);
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void getBackgroundHandler(HttpExchange exchange) throws IOException {
+        String email = extractFromPath(exchange.getRequestURI().getPath());
+
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        try {
+            File background = MediaController.getBackground(email);
+            sendFileResponse(exchange, background);
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
 
     public static void updateAvatarHandler(HttpExchange exchange) throws IOException {
         String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
@@ -33,7 +61,7 @@ public class MediaHandler {
         }
 
         try {
-            MediaController.updateAvatar(requestEmail, createFile(exchange, requestEmail, AVATARS));
+            MediaController.updateAvatar(requestEmail, createFile(exchange, requestEmail, MediaController.AVATARS));
             Server.sendResponse(exchange, 200, "Avatar changed successfully");
         } catch (NotFoundException e) {
             Server.sendResponse(exchange, 404, e.getMessage());
@@ -52,7 +80,7 @@ public class MediaHandler {
         }
 
         try {
-            MediaController.updateBackground(requestEmail, createFile(exchange, requestEmail, BACKGROUNDS));
+            MediaController.updateBackground(requestEmail, createFile(exchange, requestEmail, MediaController.BACKGROUNDS));
             Server.sendResponse(exchange, 200, "Background changed successfully");
         } catch (NotFoundException e) {
             Server.sendResponse(exchange, 404, e.getMessage());
@@ -74,7 +102,7 @@ public class MediaHandler {
         }
 
         try {
-            MediaController.addMediaToPost(postId, createFile(exchange, Integer.toString(postId), POST_MEDIA));
+            MediaController.addMediaToPost(postId, createFile(exchange, Integer.toString(postId), MediaController.POST_MEDIA));
             Server.sendResponse(exchange, 200, "Media added successfully");
         } catch (NotFoundException e) {
             Server.sendResponse(exchange, 404, e.getMessage());
@@ -99,7 +127,7 @@ public class MediaHandler {
 
         try {
             String unique = sender + "_to_" + receiver;
-            MediaController.sendMediaInChat(sender, receiver, createFile(exchange, unique, CHAT_MEDIA));
+            MediaController.sendMediaInChat(sender, receiver, createFile(exchange, unique, MediaController.CHAT_MEDIA));
             Server.sendResponse(exchange, 200, "File sent successfully");
         } catch (NotFoundException e) {
             Server.sendResponse(exchange, 404, e.getMessage());
@@ -148,7 +176,8 @@ public class MediaHandler {
                 String headersString = new String(headers);
 
                 if (headersString.contains("Content-Disposition: form-data;")) {
-                    String filename =  unique + "_" + extractFilename(headersString);
+                    String[] fileParts = extractFilename(headersString).split("\\.");
+                    String filename =  unique + "." + fileParts[fileParts.length - 1];
                     File dir = new File(directory);
                     if (!dir.exists()) {
                         dir.mkdirs();
@@ -208,5 +237,17 @@ public class MediaHandler {
             return i;
         }
         return -1;
+    }
+
+    private static void sendFileResponse(HttpExchange exchange, File file) throws IOException {
+        exchange.sendResponseHeaders(200, file.length());
+        try (FileInputStream fis = new FileInputStream(file);
+             OutputStream os = exchange.getResponseBody()) {
+            byte[] buffer = new byte[1024];
+            int count;
+            while ((count = fis.read(buffer)) >= 0) {
+                os.write(buffer, 0, count);
+            }
+        }
     }
 }
