@@ -152,4 +152,53 @@ public class ConnectionHandler {
             Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
     }
+
+    public static void getPendingHandlers(HttpExchange exchange) throws IOException {
+        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
+        String profileEmail = queryParams.get("profile");
+        String senderEmail = extractFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.authorizeRequest(exchange, senderEmail)) {
+            return;
+        }
+
+        try {
+            boolean doesExist = ConnectionController.getConnectionByPending(senderEmail, profileEmail);
+            if (doesExist) {
+                Server.sendResponse(exchange, 200, "Exists");
+            } else {
+                Server.sendResponse(exchange, 404, "Not Found");
+            }
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void isAcceptedHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        String viewerEmail = JwtUtil.parseToken(token);
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+            return;
+        }
+
+        try {
+            if (ConnectionController.isAccepted(viewerEmail, requestEmail)) {
+                Server.sendResponse(exchange, 200, "Accepted");
+            } else {
+                Server.sendResponse(exchange, 404, "Not Accepted");
+            }
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
 }

@@ -66,6 +66,7 @@ public class Router {
         server.delete("/posts/delete-comment", PostHandler::removeCommentHandler);
 
         // by email
+        server.get("/hasFollowed", FollowHandler::checkFollowHandler);
         server.get("/followers", FollowHandler::getFollowersHandler);
         server.get("/followings", FollowHandler::getFollowingsHandler);
         // by email
@@ -76,6 +77,8 @@ public class Router {
         server.get("/connections", ConnectionHandler::getConnectionsHandler);
         server.get("/connections/receiver", ConnectionHandler::getReceiverNotificationHandler);
         server.get("/connections/sender", ConnectionHandler::getSenderNotificationHandler);
+        server.get("/connections/pending/", ConnectionHandler::getPendingHandlers);
+        server.get("/connect/isAccepted/", ConnectionHandler::isAcceptedHandler);
         server.post("/send-connect", ConnectionHandler::sendConnectionHandler);
 
         // by receiver email and sender query email

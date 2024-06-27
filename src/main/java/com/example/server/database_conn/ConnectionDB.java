@@ -135,6 +135,24 @@ public class ConnectionDB extends BaseDB {
         return connections;
     }
 
+    public boolean getConnectionByPending(String sender, String receiver) throws SQLException {
+        String query = "SELECT * FROM connections WHERE sender = ? AND receiver = ? AND commited = FALSE";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, sender);
+        preparedStatement.setString(2, receiver);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next();
+    }
+
+    public boolean isConnectionAccepted(String sender, String receiver) throws SQLException {
+        String query = "SELECT * FROM connections WHERE sender = ? AND receiver = ? AND commited = TRUE";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, sender);
+        preparedStatement.setString(2, receiver);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next();
+    }
+
     public void acceptConnection(String sender, String receiver) throws SQLException {
         String query = "UPDATE connections SET commited = TRUE WHERE sender = ? AND receiver = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);

@@ -119,6 +119,14 @@ public class ConnectionController extends BaseController {
         connectionDB.deleteData(connection.getId());
     }
 
+    public static boolean getConnectionByPending(String sender, String receiver) throws SQLException, NotFoundException {
+        return connectionDB.getConnectionByPending(sender, receiver);
+    }
+
+    public static boolean isAccepted(String sender, String receiver) throws SQLException, NotFoundException {
+        return connectionDB.isConnectionAccepted(sender, receiver);
+    }
+
     public static boolean isConnected(Connection connection) throws SQLException {
         return connectionDB.connectionExists(connection.getSender(), connection.getReceiver());
     }
