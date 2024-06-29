@@ -30,6 +30,9 @@ public class Router {
         // by email
         server.get("/profile", ProfileHandler::getProfileHandler);
 
+        // by id
+        server.get("/post/media", MediaHandler::getPostMediaHandler);
+
         // by email
         server.put("/profile/update", ProfileHandler::userUpdateHandler);
         server.put("/profile/update/skill", ProfileHandler::skillUpdateHandler);
@@ -45,12 +48,14 @@ public class Router {
         server.get("/posts/feeds", PostHandler::showAllPosts);
         // by email
         server.get("/posts", PostHandler::getPostHandler);
+        server.get("/lastPost", PostHandler::getLastPostHandler);
         server.post("/posts/add", PostHandler::addPostHandler);
         server.put("/posts/add-media", MediaHandler::addMediaToPostHandler);
         server.put("/posts/update", PostHandler::updatePostHandler);
         server.delete("/posts/delete", PostHandler::deletePostHandler);
 
         // by postId
+        server.get("/posts/isLiked", PostHandler::likeExistsHandler);
         server.put("/posts/like", PostHandler::likePostHandler);
         server.put("/posts/dislike", PostHandler::dislikePostHandler);
 
