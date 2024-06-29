@@ -53,6 +53,18 @@ public class MediaHandler {
         }
     }
 
+    public static void getPostMediaHandler(HttpExchange exchange) throws IOException {
+        String postId = extractFromPath(exchange.getRequestURI().getPath());
+        try {
+            File postMedia = MediaController.getPostMedia(postId);
+            sendFileResponse(exchange, postMedia);
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
     public static void updateAvatarHandler(HttpExchange exchange) throws IOException {
         String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
 

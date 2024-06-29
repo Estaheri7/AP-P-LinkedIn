@@ -25,8 +25,12 @@ public class PostHandler {
     private static final Gson gson = new Gson();
 
     public static void showAllPosts(HttpExchange exchange) throws IOException {
+        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
+        int page = Integer.parseInt(queryParams.get("page"));
+        int pageSize = Integer.parseInt(queryParams.get("size"));
+
         try {
-            ArrayList<Post> posts = PostController.getAllPosts();
+            ArrayList<Post> posts = PostController.getAllPosts(page, pageSize);
             Server.sendResponse(exchange, 200, gson.toJson(posts));
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
@@ -100,6 +104,10 @@ public class PostHandler {
     }
 
     public static void getPostHandler(HttpExchange exchange) throws IOException {
+        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
+        int page = Integer.parseInt(queryParams.get("page"));
+        int pageSize = Integer.parseInt(queryParams.get("size"));
+
         String token = AuthUtil.getTokenFromHeader(exchange);
 
         if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
@@ -114,8 +122,32 @@ public class PostHandler {
         }
 
         try {
-            ArrayList<Post> posts = PostController.getPosts(requestEmail);
+            ArrayList<Post> posts = PostController.getPosts(requestEmail, page, pageSize);
             Server.sendResponse(exchange, 200, gson.toJson(posts));
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void getLastPostHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        String requestEmail = extractFromPath(exchange.getRequestURI().getPath());
+
+        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+            return;
+        }
+
+        try {
+            Post post = PostController.getLastPost(requestEmail);
+            Server.sendResponse(exchange, 200, gson.toJson(post));
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
@@ -192,10 +224,33 @@ public class PostHandler {
         try {
             Like like = new Like(postId, viewerEmail);
 
-            PostController.dislikePost(like);
+            PostController.dislikePost(like, viewerEmail);
             Server.sendResponse(exchange, 200, "Disliked post successfully");
         } catch (NotFoundException e) {
             Server.sendResponse(exchange, 403, e.getMessage());
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void likeExistsHandler(HttpExchange exchange) throws IOException {
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        if (!AuthUtil.authorizeRequest(exchange, viewerEmail)) {
+            return;
+        }
+
+        int postId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
+
+        try {
+            Like like = new Like(postId, viewerEmail);
+
+            if (PostController.likeExists(like)) {
+                Server.sendResponse(exchange, 200, "Exists");
+            } else {
+                Server.sendResponse(exchange, 404, "Not exists");
+            }
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
         } catch (Exception e) {
