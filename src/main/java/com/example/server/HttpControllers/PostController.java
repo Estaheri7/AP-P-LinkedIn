@@ -29,8 +29,8 @@ public class PostController extends BaseController {
         }
     }
 
-    public static ArrayList<Post> getAllPosts() throws SQLException {
-        return postDB.getAllPosts();
+    public static ArrayList<Post> getAllPosts(int page, int pageSize) throws SQLException {
+        return postDB.getAllPosts(page, pageSize);
     }
 
     public static void addPost(Post post) throws SQLException {
@@ -58,8 +58,12 @@ public class PostController extends BaseController {
         return post;
     }
 
-    public static ArrayList<Post> getPosts(String email) throws SQLException {
-        return postDB.getPosts(email);
+    public static ArrayList<Post> getPosts(String email, int page, int pageSize) throws SQLException {
+        return postDB.getPosts(email, page, pageSize);
+    }
+
+    public static Post getLastPost(String email) throws SQLException {
+        return postDB.getLastPost(email);
     }
 
     public static void deletePost(int id, Post requestPost) throws SQLException, NotFoundException {
@@ -80,12 +84,12 @@ public class PostController extends BaseController {
         postDB.likePost(like.getPostId());
     }
 
-    public static void dislikePost(Like like) throws SQLException, NotFoundException {
+    public static void dislikePost(Like like, String email) throws SQLException, NotFoundException {
         if (!likeExists(like)) {
             throw new NotFoundException("You didn't like this post yet");
         }
 
-        likeDB.deleteData(like.getPostId());
+        likeDB.deleteData(like.getPostId(), email);
         postDB.dislikePost(like.getPostId());
     }
 

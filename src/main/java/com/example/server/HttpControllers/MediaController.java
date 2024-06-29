@@ -6,6 +6,7 @@ import com.example.server.models.Chat;
 import com.example.server.models.User;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.sql.SQLException;
 
 public class MediaController extends BaseController {
@@ -49,6 +50,23 @@ public class MediaController extends BaseController {
         } else {
             throw new NotFoundException("Background not found for email: " + email);
         }
+    }
+
+    public static File getPostMedia(String postId) throws NotFoundException {
+        File directory = new File(POST_MEDIA);
+
+        File matchingFile = directory.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith(postId + ".");
+            }
+        })[0];
+
+        if (matchingFile == null) {
+            throw new NotFoundException("Post not found for postId: " + postId);
+        }
+
+        return matchingFile;
     }
 
     public static void updateAvatar(String email, String fileUrl) throws SQLException, NotFoundException {
