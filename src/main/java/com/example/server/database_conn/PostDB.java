@@ -97,10 +97,12 @@ public class PostDB extends BaseDB {
         return null;
     }
 
-    public ArrayList<Post> getPosts(String email) throws SQLException {
-        String query = "SELECT * FROM posts WHERE email = ?";
+    public ArrayList<Post> getPosts(String email, int page, int pageSize) throws SQLException {
+        String query = "SELECT * FROM posts WHERE email = ? LIMIT ? OFFSET ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
+        preparedStatement.setInt(2, pageSize);
+        preparedStatement.setInt(3, page * pageSize);
         ResultSet resultSet = preparedStatement.executeQuery();
 
         ArrayList<Post> posts = new ArrayList<>();
@@ -122,6 +124,28 @@ public class PostDB extends BaseDB {
         return posts;
     }
 
+    public Post getLastPost(String email) throws SQLException {
+        String query = "SELECT * FROM posts WHERE email = ? ORDER BY created_at DESC LIMIT 1";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        if (resultSet.next()) {
+            int postId = resultSet.getInt("id");
+            String author = resultSet.getString("email");
+            String title = resultSet.getString("title");
+            String content = resultSet.getString("content");
+            String mediaURL = resultSet.getString("mediaUrl");
+            Timestamp createdAt = resultSet.getTimestamp("created_at");
+            int likes = resultSet.getInt("likes");
+            int comments = resultSet.getInt("comments");
+
+            return new Post(postId, author, title, content, mediaURL, createdAt, likes, comments);
+        } else {
+            return null; // or throw an exception if you prefer
+        }
+    }
+
     public void addMedia(int id, String mediaUrl) throws SQLException {
         String query = "UPDATE posts SET mediaUrl=? WHERE id=?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
@@ -130,10 +154,13 @@ public class PostDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
-    public ArrayList<Post> getAllPosts() throws SQLException {
-        String query = "SELECT * FROM posts";
+    public ArrayList<Post> getAllPosts(int page, int pageSize) throws SQLException {
+        String query = "SELECT * FROM posts LIMIT ? OFFSET ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setInt(1, pageSize);
+        preparedStatement.setInt(2, page * pageSize);
         ResultSet resultSet = preparedStatement.executeQuery();
+
         ArrayList<Post> posts = new ArrayList<>();
 
         while (resultSet.next()) {

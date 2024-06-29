@@ -37,10 +37,11 @@ public class LikeDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
-    public void deleteData(int id) throws SQLException {
-        String query = "DELETE FROM likes WHERE post_id = ?";
+    public void deleteData(int id, String email) throws SQLException {
+        String query = "DELETE FROM likes WHERE post_id = ? AND email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setInt(1, id);
+        preparedStatement.setString(2, email);
         preparedStatement.executeUpdate();
     }
 
@@ -98,7 +99,3 @@ public class LikeDB extends BaseDB {
         return resultSet.next();
     }
 }
-
-
-
-

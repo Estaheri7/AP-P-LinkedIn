@@ -52,18 +52,16 @@ public class UserDB extends BaseDB {
     }
 
     public void updateData(User user) throws SQLException {
-        String query = "UPDATE users SET name = ?, lastName = ?, additionalName = ?, avatar_url = ?, background_url = ?, headline = ?, country = ?, city = ? WHERE email = ?";
+        String query = "UPDATE users SET name = ?, lastName = ?, additionalName = ?, headline = ?, country = ?, city = ? WHERE email = ?";
 
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, user.getFirstName());
         preparedStatement.setString(2, user.getLastName());
         preparedStatement.setString(3, user.getAdditionalName());
-        preparedStatement.setString(4, user.getAvatar_url());
-        preparedStatement.setString(5, user.getBackground_url());
-        preparedStatement.setString(6, user.getHeadline());
-        preparedStatement.setString(7, user.getCountry());
-        preparedStatement.setString(8, user.getCity());
-        preparedStatement.setString(9, user.getEmail());
+        preparedStatement.setString(4, user.getHeadline());
+        preparedStatement.setString(5, user.getCountry());
+        preparedStatement.setString(6, user.getCity());
+        preparedStatement.setString(7, user.getEmail());
         preparedStatement.executeUpdate();
     }
 
