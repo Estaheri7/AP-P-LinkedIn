@@ -96,9 +96,7 @@ public class ContactDB extends BaseDB {
 
             if (visibility.equals(Contact.ONLY_ME) && !email.equals(viewerEmail)) {
                 birthDate = new Date(0);
-            } else if (visibility.equals(Contact.MY_CONNECTIONS) && flag) {
-                birthDate = resultSet.getDate("birth_date");
-            } else if (visibility.equals(Contact.ONLY_ME)) {
+            } else if (visibility.equals(Contact.MY_CONNECTIONS) && flag || email.equals(viewerEmail)) {
                 birthDate = resultSet.getDate("birth_date");
             } else if (visibility.equals(Contact.EVERYONE)) {
                 birthDate = resultSet.getDate("birth_date");
