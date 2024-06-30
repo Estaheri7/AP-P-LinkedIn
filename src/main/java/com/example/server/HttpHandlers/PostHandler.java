@@ -104,10 +104,6 @@ public class PostHandler {
     }
 
     public static void getPostHandler(HttpExchange exchange) throws IOException {
-        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
-        int page = Integer.parseInt(queryParams.get("page"));
-        int pageSize = Integer.parseInt(queryParams.get("size"));
-
         String token = AuthUtil.getTokenFromHeader(exchange);
 
         if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
@@ -122,7 +118,7 @@ public class PostHandler {
         }
 
         try {
-            ArrayList<Post> posts = PostController.getPosts(requestEmail, page, pageSize);
+            ArrayList<Post> posts = PostController.getPosts(requestEmail);
             Server.sendResponse(exchange, 200, gson.toJson(posts));
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());

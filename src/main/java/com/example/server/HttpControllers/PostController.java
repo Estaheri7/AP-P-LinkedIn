@@ -58,8 +58,8 @@ public class PostController extends BaseController {
         return post;
     }
 
-    public static ArrayList<Post> getPosts(String email, int page, int pageSize) throws SQLException {
-        return postDB.getPosts(email, page, pageSize);
+    public static ArrayList<Post> getPosts(String email) throws SQLException {
+        return postDB.getPosts(email);
     }
 
     public static Post getLastPost(String email) throws SQLException {

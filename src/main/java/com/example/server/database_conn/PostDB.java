@@ -97,12 +97,10 @@ public class PostDB extends BaseDB {
         return null;
     }
 
-    public ArrayList<Post> getPosts(String email, int page, int pageSize) throws SQLException {
-        String query = "SELECT * FROM posts WHERE email = ? LIMIT ? OFFSET ?";
+    public ArrayList<Post> getPosts(String email) throws SQLException {
+        String query = "SELECT * FROM posts WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
-        preparedStatement.setInt(2, pageSize);
-        preparedStatement.setInt(3, page * pageSize);
         ResultSet resultSet = preparedStatement.executeQuery();
 
         ArrayList<Post> posts = new ArrayList<>();
