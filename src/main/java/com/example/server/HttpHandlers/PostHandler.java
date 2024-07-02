@@ -25,12 +25,8 @@ public class PostHandler {
     private static final Gson gson = new Gson();
 
     public static void showAllPosts(HttpExchange exchange) throws IOException {
-        HashMap<String, String> queryParams = (HashMap<String, String>) exchange.getAttribute("queryParams");
-        int page = Integer.parseInt(queryParams.get("page"));
-        int pageSize = Integer.parseInt(queryParams.get("size"));
-
         try {
-            ArrayList<Post> posts = PostController.getAllPosts(page, pageSize);
+            ArrayList<Post> posts = PostController.getAllPosts();
             Server.sendResponse(exchange, 200, gson.toJson(posts));
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());

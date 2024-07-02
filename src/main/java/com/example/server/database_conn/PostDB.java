@@ -152,11 +152,9 @@ public class PostDB extends BaseDB {
         preparedStatement.executeUpdate();
     }
 
-    public ArrayList<Post> getAllPosts(int page, int pageSize) throws SQLException {
-        String query = "SELECT * FROM posts LIMIT ? OFFSET ?";
+    public ArrayList<Post> getAllPosts() throws SQLException {
+        String query = "SELECT * FROM posts";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
-        preparedStatement.setInt(1, pageSize);
-        preparedStatement.setInt(2, page * pageSize);
         ResultSet resultSet = preparedStatement.executeQuery();
 
         ArrayList<Post> posts = new ArrayList<>();
