@@ -88,10 +88,13 @@ public class Router {
 
         // by receiver email and sender query email
         server.put("/accept-connection", ConnectionHandler::acceptConnectionHandler);
-        server.delete("/decline-connection", ConnectionHandler::declineConnectionHandler);
+        server.put("/decline-connection", ConnectionHandler::declineConnectionHandler);
 
         server.get("/chats", ChatHandler::displayChatHandler);
         server.post("/send-message", ChatHandler::sendMessageHandler);
-        server.post("/send-file", MediaHandler::sendMediaChatHandler);
+        server.put("/send-file", MediaHandler::sendMediaChatHandler);
+
+        // by unique file
+        server.get("/chat-media", MediaHandler::getChatMediaHandler);
     }
 }

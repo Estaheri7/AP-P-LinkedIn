@@ -7,6 +7,8 @@ public class Contact {
     private String email;
     private String viewLink;
     private String phoneNumber;
+    private String workNumber;
+    private String homeNumber;
     private String address;
     private Date birthDate;
     private String fastConnect;
@@ -16,27 +18,33 @@ public class Contact {
     public static String MY_CONNECTIONS = "my_connections";
     public static String EVERYONE = "everyone";
 
-    public Contact(String email, String viewLink, String phoneNumber) {
+    public Contact(String email, String viewLink, String phoneNumber, String workNumber, String homeNumber) {
         this.email = email;
         this.viewLink = viewLink;
         this.phoneNumber = phoneNumber;
+        this.workNumber = workNumber;
+        this.homeNumber = homeNumber;
     }
 
-    public Contact(int id, String email, String viewLink, String phoneNumber, String address, Date birthDate, String fastConnect) {
+    public Contact(int id, String email, String viewLink, String phoneNumber, String workNumber, String homeNumber, String address, Date birthDate, String fastConnect) {
         this.id = id;
         this.email = email;
         this.viewLink = viewLink;
         this.phoneNumber = phoneNumber;
+        this.workNumber = workNumber;
+        this.homeNumber = homeNumber;
         this.address = address;
         this.birthDate = birthDate;
         this.fastConnect = fastConnect;
     }
 
-    public Contact(int id, String email, String viewLink, String phoneNumber, String address, Date birthDate, String fastConnect, String visibility) {
+    public Contact(int id, String email, String viewLink, String phoneNumber, String workNumber, String homeNumber, String address, Date birthDate, String fastConnect, String visibility) {
         this.id = id;
         this.email = email;
         this.viewLink = viewLink;
         this.phoneNumber = phoneNumber;
+        this.workNumber = workNumber;
+        this.homeNumber = homeNumber;
         this.address = address;
         this.birthDate = birthDate;
         this.fastConnect = fastConnect;
@@ -97,5 +105,21 @@ public class Contact {
 
     public void setFastConnect(String fastConnect) {
         this.fastConnect = fastConnect;
+    }
+
+    public String getWorkNumber() {
+        return workNumber;
+    }
+
+    public void setWorkNumber(String workNumber) {
+        this.workNumber = workNumber;
+    }
+
+    public String getHomeNumber() {
+        return homeNumber;
+    }
+
+    public void setHomeNumber(String homeNumber) {
+        this.homeNumber = homeNumber;
     }
 }

@@ -30,7 +30,7 @@ public class UserController extends BaseController {
         userDB.insertData(user);
         skillDB.insertData(new Skill(user.getEmail(), "", "", "", "", ""));
         educationDB.insertData(new Education(user.getEmail(), "", "", 0.0, null));
-        contactDB.insertData(new Contact(user.getEmail(), "", ""));
+        contactDB.insertData(new Contact(user.getEmail(), "", "", "", ""));
     }
 
     public static User getUser(String email) throws SQLException, NotFoundException {

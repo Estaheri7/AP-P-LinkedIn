@@ -21,6 +21,8 @@ public class ContactDB extends BaseDB {
                 + "email VARCHAR(255) UNIQUE NOT NULL,"
                 + "view_link VARCHAR(40) NOT NULL,"
                 + "phone_number VARCHAR(40) NOT NULL,"
+                + "work_number VARCHAR(40) NOT NULL,"
+                + "home_number VARCHAR(40) NOT NULL,"
                 + "address VARCHAR(220),"
                 + "birth_date DATE,"
                 + "fast_connect VARCHAR(40),"
@@ -33,32 +35,36 @@ public class ContactDB extends BaseDB {
     }
 
     public void insertData(Contact contact) throws SQLException {
-        String query = "INSERT INTO contact (email, view_link, phone_number, address, birth_date, fast_connect)"
-                + " VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO contact (email, view_link, phone_number, work_number, home_number, address, birth_date, fast_connect)"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, contact.getEmail());
         preparedStatement.setString(2, contact.getViewLink());
         preparedStatement.setString(3, contact.getPhoneNumber());
-        preparedStatement.setString(4, contact.getAddress());
-        preparedStatement.setDate(5, (Date) contact.getBirthDate());
-        preparedStatement.setString(6, contact.getFastConnect());
+        preparedStatement.setString(4, contact.getWorkNumber());
+        preparedStatement.setString(5, contact.getHomeNumber());
+        preparedStatement.setString(6, contact.getAddress());
+        preparedStatement.setDate(7, (Date) contact.getBirthDate());
+        preparedStatement.setString(8, contact.getFastConnect());
         preparedStatement.executeUpdate();
     }
 
     public void updateData(Contact contact) throws SQLException {
         String query = "UPDATE contact "
-                + "SET view_link = ?, phone_number = ?, address = ?, birth_date = ?, fast_connect = ? WHERE email = ?";
+                + "SET view_link = ?, phone_number = ?, work_number = ?, home_number = ?, address = ?, birth_date = ?, fast_connect = ? WHERE email = ?";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, contact.getViewLink());
         preparedStatement.setString(2, contact.getPhoneNumber());
-        preparedStatement.setString(3, contact.getAddress());
+        preparedStatement.setString(3, contact.getWorkNumber());
+        preparedStatement.setString(4, contact.getHomeNumber());
+        preparedStatement.setString(5, contact.getAddress());
         if (contact.getBirthDate() != null) {
-            preparedStatement.setDate(4, new java.sql.Date(contact.getBirthDate().getTime()));
+            preparedStatement.setDate(6, new java.sql.Date(contact.getBirthDate().getTime()));
         } else {
-            preparedStatement.setDate(4, null);
+            preparedStatement.setDate(6, null);
         }
-        preparedStatement.setString(5, contact.getFastConnect());
-        preparedStatement.setString(6, contact.getEmail());
+        preparedStatement.setString(7, contact.getFastConnect());
+        preparedStatement.setString(8, contact.getEmail());
         preparedStatement.executeUpdate();
     }
 
@@ -86,6 +92,8 @@ public class ContactDB extends BaseDB {
             int id = resultSet.getInt("id");
             String viewLink = resultSet.getString("view_link");
             String phoneNumber = resultSet.getString("phone_number");
+            String workNumber = resultSet.getString("work_number");
+            String homeNumber = resultSet.getString("home_number");
             String address = resultSet.getString("address");
             String fastConnect = resultSet.getString("fast_connect");
             String visibility = resultSet.getString("visibility");
@@ -102,7 +110,7 @@ public class ContactDB extends BaseDB {
                 birthDate = resultSet.getDate("birth_date");
             }
 
-            return new Contact(id, email, viewLink, phoneNumber, address, birthDate, fastConnect, visibility);
+            return new Contact(id, email, viewLink, phoneNumber, workNumber, homeNumber, address, birthDate, fastConnect, visibility);
         }
 
         return null;
