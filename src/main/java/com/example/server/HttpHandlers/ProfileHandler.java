@@ -127,6 +127,7 @@ public class ProfileHandler {
         try {
             Education currentEducation = UserController.getEducation(requestEmail);
             education.setId(currentEducation.getId());
+            education.setEmail(currentEducation.getEmail());
             ProfileController.updateEducation(education);
             Server.sendResponse(exchange, 200, "Education updated successfully");
         } catch (IllegalArgumentException e) {
