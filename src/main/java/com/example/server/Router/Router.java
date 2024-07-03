@@ -97,5 +97,9 @@ public class Router {
 
         // by unique file
         server.get("/chat-media", MediaHandler::getChatMediaHandler);
+
+        // by email
+        server.get("/notifications", NotificationHandler::getAllNotificationsHandler);
+        server.post("/add-notification", NotificationHandler::addNotificationHandler);
     }
 }

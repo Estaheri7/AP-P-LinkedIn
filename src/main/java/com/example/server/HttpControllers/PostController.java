@@ -8,6 +8,7 @@ import com.example.server.database_conn.LikeDB;
 import com.example.server.database_conn.PostDB;
 import com.example.server.models.Comment;
 import com.example.server.models.Like;
+import com.example.server.models.Notification;
 import com.example.server.models.Post;
 import com.mysql.cj.jdbc.exceptions.NotUpdatable;
 
@@ -39,6 +40,9 @@ public class PostController extends BaseController {
         }
 
         postDB.insertData(post);
+        ArrayList<Post> allPosts = postDB.getPosts(post.getAuthor());
+        Post addedPost = allPosts.get(allPosts.size() - 1);
+        NotificationController.addNotification(new Notification(post.getAuthor(), "Post_Notice", "Added a new Post", addedPost.getId()));
     }
 
     public static void updatePost(Post post) throws SQLException {
@@ -82,6 +86,7 @@ public class PostController extends BaseController {
 
         likeDB.insertData(like);
         postDB.likePost(like.getPostId());
+        NotificationController.addNotification(new Notification(like.getEmail(), "Like_Notice", "Liked the post", like.getPostId()));
     }
 
     public static void dislikePost(Like like, String email) throws SQLException, NotFoundException {
@@ -107,6 +112,7 @@ public class PostController extends BaseController {
 
         commentDB.insertData(comment);
         postDB.increaseComment(comment.getPostId());
+        NotificationController.addNotification(new Notification(comment.getEmail(), "Comment_Notice", "Added a new Comment", comment.getPostId()));
     }
 
     public static Comment getComment(int id) throws SQLException, NotFoundException {
