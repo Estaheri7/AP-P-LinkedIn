@@ -3,7 +3,9 @@ package com.example.server.HttpHandlers;
 import com.example.server.CustomExceptions.MediaException;
 import com.example.server.CustomExceptions.NotFoundException;
 import com.example.server.HttpControllers.MediaController;
+import com.example.server.HttpControllers.UserController;
 import com.example.server.Server;
+import com.example.server.models.User;
 import com.example.server.utils.AuthUtil;
 import com.example.server.utils.JwtUtil;
 import com.sun.net.httpserver.HttpExchange;
@@ -61,6 +63,20 @@ public class MediaHandler {
         } catch (NotFoundException e) {
             Server.sendResponse(exchange, 404, e.getMessage());
         } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    public static void getChatMediaHandler(HttpExchange exchange) throws IOException {
+        String unique = extractFromPath(exchange.getRequestURI().getPath());
+
+        try {
+            File chatMedia = MediaController.getChatMedia(unique);
+            sendFileResponse(exchange, chatMedia);
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
     }
@@ -138,7 +154,11 @@ public class MediaHandler {
         }
 
         try {
-            String unique = sender + "_to_" + receiver;
+            User senderUser = UserController.getUser(sender);
+            User receiverUser = UserController.getUser(receiver);
+
+            String unique = senderUser.getId() + "_to_" + receiverUser.getId();
+
             MediaController.sendMediaInChat(sender, receiver, createFile(exchange, unique, MediaController.CHAT_MEDIA));
             Server.sendResponse(exchange, 200, "File sent successfully");
         } catch (NotFoundException e) {
@@ -189,7 +209,12 @@ public class MediaHandler {
 
                 if (headersString.contains("Content-Disposition: form-data;")) {
                     String[] fileParts = extractFilename(headersString).split("\\.");
-                    String filename =  unique + "." + fileParts[fileParts.length - 1];
+                    String filename;
+                    if (directory.equals(MediaController.CHAT_MEDIA)) {
+                        filename = unique + fileParts[0] + "." + fileParts[1];
+                    } else {
+                        filename = unique + "." + fileParts[fileParts.length - 1];
+                    }
                     File dir = new File(directory);
                     if (!dir.exists()) {
                         dir.mkdirs();

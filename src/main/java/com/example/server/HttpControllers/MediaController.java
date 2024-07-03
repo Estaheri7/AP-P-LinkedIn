@@ -69,6 +69,23 @@ public class MediaController extends BaseController {
         return matchingFile;
     }
 
+    public static File getChatMedia(String unique) throws NotFoundException {
+        File directory = new File(CHAT_MEDIA);
+
+        File matchingFile = directory.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith(unique + ".");
+            }
+        })[0];
+
+        if (matchingFile == null) {
+            throw new NotFoundException("Media not found: " + unique);
+        }
+
+        return matchingFile;
+    }
+
     public static void updateAvatar(String email, String fileUrl) throws SQLException, NotFoundException {
         if (userDB.getUser(email) == null) {
             throw new NotFoundException("User not found");
