@@ -76,4 +76,26 @@ public class ChatHandler {
             Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
         }
     }
+
+    public static void getReceiverChatHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+        String receiver = JwtUtil.parseToken(token);
+        if (!AuthUtil.isUserAuthorized(exchange, token, receiver)) {
+            return;
+        }
+
+        try {
+            ArrayList<Chat> chats = ChatController.getReceiverChat(receiver);
+            Server.sendResponse(exchange, 200, gson.toJson(chats));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, e.getMessage());
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
 }

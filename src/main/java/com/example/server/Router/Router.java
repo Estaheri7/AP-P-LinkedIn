@@ -91,6 +91,7 @@ public class Router {
         server.put("/decline-connection", ConnectionHandler::declineConnectionHandler);
 
         server.get("/chats", ChatHandler::displayChatHandler);
+        server.get("/user/chat", ChatHandler::getReceiverChatHandler);
         server.post("/send-message", ChatHandler::sendMessageHandler);
         server.put("/send-file", MediaHandler::sendMediaChatHandler);
 

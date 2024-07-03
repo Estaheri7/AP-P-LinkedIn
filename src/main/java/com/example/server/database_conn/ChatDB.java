@@ -72,4 +72,22 @@ public class ChatDB extends BaseDB {
         }
         return chats;
     }
+
+    public ArrayList<Chat> getReceiverChats(String receiver) throws SQLException {
+        String query = "SELECT * FROM chat WHERE receiver = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+        preparedStatement.setString(1, receiver);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        ArrayList<Chat> chats = new ArrayList<>();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String senderUser = resultSet.getString("sender");
+            String receiverUser = resultSet.getString("receiver");
+            String message = resultSet.getString("message");
+            Timestamp timestamp = resultSet.getTimestamp("timestamp");
+            Chat chat = new Chat(id, senderUser, receiverUser, message, timestamp);
+            chats.add(chat);
+        }
+        return chats;
+    }
 }

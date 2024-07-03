@@ -46,4 +46,13 @@ public class ChatController extends BaseController {
 
         return chatDB.getChats(sender, receiver);
     }
+
+    public static ArrayList<Chat> getReceiverChat(String receiver) throws SQLException, NotFoundException {
+        User receiverUser = userDB.getUser(receiver);
+        if (receiverUser == null) {
+            throw new NotFoundException("User not found");
+        }
+
+        return chatDB.getReceiverChats(receiver);
+    }
 }
