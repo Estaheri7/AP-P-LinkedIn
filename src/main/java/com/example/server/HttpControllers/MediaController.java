@@ -3,6 +3,7 @@ package com.example.server.HttpControllers;
 import com.example.server.CustomExceptions.NotFoundException;
 import com.example.server.database_conn.*;
 import com.example.server.models.Chat;
+import com.example.server.models.Notification;
 import com.example.server.models.User;
 
 import java.io.File;
@@ -92,6 +93,7 @@ public class MediaController extends BaseController {
         }
 
         userDB.uploadAvatar(email, fileUrl);
+        NotificationController.addNotification(new Notification(email, "Update:  ", "Has updated their profile Avatar", 0));
     }
 
     public static void updateBackground(String email, String fileUrl) throws SQLException, NotFoundException {
@@ -100,6 +102,7 @@ public class MediaController extends BaseController {
         }
 
         userDB.uploadBackground(email, fileUrl);
+        NotificationController.addNotification(new Notification(email, "Update:  ", "Has updated their profile Background", 0));
     }
 
     public static void addMediaToPost(int postId, String fileUrl) throws SQLException, NotFoundException {

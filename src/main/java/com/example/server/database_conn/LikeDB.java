@@ -52,7 +52,7 @@ public class LikeDB extends BaseDB {
     }
 
     public ArrayList<Like> getLikes(int postId) throws SQLException {
-        String query = "SELECT * FROM likes WHERE post_id = ?";
+        String query = "SELECT * FROM likes WHERE post_id = ? ORDER BY like_time DESC";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setInt(1, postId);
         ResultSet resultSet = preparedStatement.executeQuery();

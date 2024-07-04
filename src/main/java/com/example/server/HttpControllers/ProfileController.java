@@ -34,12 +34,12 @@ public class ProfileController extends BaseController {
         }
 
         userDB.updateData(user);
-        NotificationController.addNotification(new Notification(user.getEmail(), "intro_update", "Updated their profile information", 0));
+        NotificationController.addNotification(new Notification(user.getEmail(), "Profile Update:  ", "Updated their profile information", 0));
     }
 
     public static void updateSkill(Skill skill) throws SQLException {
         skillDB.updateData(skill);
-        NotificationController.addNotification(new Notification(skill.getEmail(), "skill_update", "Updated their skills information", 0));
+        NotificationController.addNotification(new Notification(skill.getEmail(), "Profile Update:  ", "Updated their skills information", 0));
     }
 
     public static void addEducation(Education education) throws SQLException {
@@ -48,7 +48,7 @@ public class ProfileController extends BaseController {
         }
 
         educationDB.insertData(education);
-        NotificationController.addNotification(new Notification(education.getEmail(), "education_update", "Added new education to their profile", 0));
+        NotificationController.addNotification(new Notification(education.getEmail(), "Profile Update:  ", "Added new education to their profile", 0));
     }
 
     public static void updateEducation(Education education) throws SQLException {
@@ -57,7 +57,7 @@ public class ProfileController extends BaseController {
         }
 
         educationDB.updateData(education);
-        NotificationController.addNotification(new Notification(education.getEmail(), "education_update", "Updated their education information", 0));
+        NotificationController.addNotification(new Notification(education.getEmail(), "Profile Update:  ", "Updated their education information", 0));
     }
 
     public static void updateContact(Contact contact) throws SQLException {
@@ -66,12 +66,12 @@ public class ProfileController extends BaseController {
         }
 
         contactDB.updateData(contact);
-        NotificationController.addNotification(new Notification(contact.getEmail(), "contact_update", "Updated their contact information", 0));
+        NotificationController.addNotification(new Notification(contact.getEmail(), "Profile Update:  ", "Updated their contact information", 0));
     }
 
     public static void updateVisibility(String email, String visibility) throws SQLException {
         contactDB.changeVisibility(email, visibility);
         visibility = visibility.replace("_", " ");
-        NotificationController.addNotification(new Notification(email, "visibility_update", "Updated their birth date visibility to " + visibility, 0));
+        NotificationController.addNotification(new Notification(email, "Profile Update:  ", "Updated their birth date visibility to " + visibility, 0));
     }
 }

@@ -53,14 +53,14 @@ public class NotificationDB extends BaseDB {
         return null;
     }
 
-    public ArrayList<Notification> getAllNotifications(String email) throws SQLException {
-        String query = "SELECT * FROM notifications WHERE email = ?";
+    public ArrayList<Notification> getAllNotifications() throws SQLException {
+        String query = "SELECT * FROM notifications ORDER BY timestamp DESC";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
-        preparedStatement.setString(1, email);
         ResultSet resultSet = preparedStatement.executeQuery();
         ArrayList<Notification> notifications = new ArrayList<>();
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
+            String email = resultSet.getString("email");
             String title = resultSet.getString("title");
             String message = resultSet.getString("message");
             int postId = resultSet.getInt("post_id");

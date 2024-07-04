@@ -21,7 +21,7 @@ public class NotificationController extends BaseController {
         notificationDB.insertData(notification);
     }
 
-    public static ArrayList<Notification> getAllNotifications(String email) throws SQLException {
-        return notificationDB.getAllNotifications(email);
+    public static ArrayList<Notification> getAllNotifications() throws SQLException {
+        return notificationDB.getAllNotifications();
     }
 }

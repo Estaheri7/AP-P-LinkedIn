@@ -98,7 +98,7 @@ public class PostDB extends BaseDB {
     }
 
     public ArrayList<Post> getPosts(String email) throws SQLException {
-        String query = "SELECT * FROM posts WHERE email = ?";
+        String query = "SELECT * FROM posts WHERE email = ? ORDER BY created_at DESC";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         preparedStatement.setString(1, email);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -153,7 +153,7 @@ public class PostDB extends BaseDB {
     }
 
     public ArrayList<Post> getAllPosts() throws SQLException {
-        String query = "SELECT * FROM posts";
+        String query = "SELECT * FROM posts ORDER BY created_at DESC";
         PreparedStatement preparedStatement = conn.prepareStatement(query);
         ResultSet resultSet = preparedStatement.executeQuery();
 

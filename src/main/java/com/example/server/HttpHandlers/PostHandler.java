@@ -123,6 +123,31 @@ public class PostHandler {
         }
     }
 
+    public static void getPostByIdHandler(HttpExchange exchange) throws IOException {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
+            return;
+        }
+
+        String viewerEmail = JwtUtil.parseToken(AuthUtil.getTokenFromHeader(exchange));
+        if (!AuthUtil.isUserAuthorized(exchange, token, viewerEmail)) {
+            return;
+        }
+
+        int postId = Integer.parseInt(extractFromPath(exchange.getRequestURI().getPath()));
+
+        try {
+            Post post = PostController.getPost(postId);
+            Server.sendResponse(exchange, 200, gson.toJson(post));
+        } catch (NotFoundException e) {
+            Server.sendResponse(exchange, 404, "Post not found");
+        } catch (SQLException e) {
+            Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
+        } catch (Exception e) {
+            Server.sendResponse(exchange, 500, "Internal server error: " + e.getMessage());
+        }
+    }
+
     public static void getLastPostHandler(HttpExchange exchange) throws IOException {
         String token = AuthUtil.getTokenFromHeader(exchange);
 

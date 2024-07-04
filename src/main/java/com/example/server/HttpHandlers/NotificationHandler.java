@@ -38,13 +38,13 @@ public class NotificationHandler {
     }
 
     public static void getAllNotificationsHandler(HttpExchange exchange) throws IOException {
-        String email = extractFromPath(exchange.getRequestURI().getPath());
-        if (!AuthUtil.authorizeRequest(exchange, email)) {
+        String token = AuthUtil.getTokenFromHeader(exchange);
+        if (token == null || !AuthUtil.isTokenValid(exchange, token)) {
             return;
         }
 
         try {
-            ArrayList<Notification> notifications = NotificationController.getAllNotifications(email);
+            ArrayList<Notification> notifications = NotificationController.getAllNotifications();
             Server.sendResponse(exchange, 200, gson.toJson(notifications));
         } catch (SQLException e) {
             Server.sendResponse(exchange, 500, "Database error: " + e.getMessage());
