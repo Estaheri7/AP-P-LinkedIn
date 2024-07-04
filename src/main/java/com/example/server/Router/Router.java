@@ -46,6 +46,10 @@ public class Router {
 
         // All posts
         server.get("/posts/feeds", PostHandler::showAllPosts);
+
+        // by id
+        server.get("/post", PostHandler::getPostByIdHandler);
+
         // by email
         server.get("/posts", PostHandler::getPostHandler);
         server.get("/lastPost", PostHandler::getLastPostHandler);
