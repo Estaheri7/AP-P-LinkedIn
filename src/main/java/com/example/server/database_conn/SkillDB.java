@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class SkillDB extends BaseDB {
 
@@ -85,4 +86,32 @@ public class SkillDB extends BaseDB {
         }
         return null;
     }
+
+    public ArrayList<Skill> getSkillsBySkill(String skillKeyword) throws SQLException {
+        ArrayList<Skill> skills = new ArrayList<>();
+        String query = "SELECT * FROM skills WHERE skill_1 LIKE ? OR skill_2 LIKE ? OR skill_3 LIKE ? OR skill_4 LIKE ? OR skill_5 LIKE ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(query);
+
+        for (int i = 1; i <= 5; i++) {
+            preparedStatement.setString(i, skillKeyword);
+        }
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        while (resultSet.next()) {
+            int id = resultSet.getInt("id");
+            String email = resultSet.getString("email");
+            String skill1 = resultSet.getString("skill_1");
+            String skill2 = resultSet.getString("skill_2");
+            String skill3 = resultSet.getString("skill_3");
+            String skill4 = resultSet.getString("skill_4");
+            String skill5 = resultSet.getString("skill_5");
+
+            Skill skill = new Skill(id, email, skill1, skill2, skill3, skill4, skill5);
+            skills.add(skill);
+        }
+
+        return skills;
+    }
+
 }

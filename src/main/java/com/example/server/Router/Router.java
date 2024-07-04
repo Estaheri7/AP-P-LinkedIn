@@ -44,6 +44,9 @@ public class Router {
         // by query
         server.get("/search", SearchHandler::searchHandler);
 
+        // by skill
+        server.get("/search/skill", SearchHandler::searchSkillHandler);
+
         // All posts
         server.get("/posts/feeds", PostHandler::showAllPosts);
 

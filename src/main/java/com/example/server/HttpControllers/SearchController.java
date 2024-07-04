@@ -2,8 +2,10 @@ package com.example.server.HttpControllers;
 
 import com.example.server.database_conn.HashtagDB;
 import com.example.server.database_conn.PostDB;
+import com.example.server.database_conn.SkillDB;
 import com.example.server.models.Hashtag;
 import com.example.server.models.Post;
+import com.example.server.models.Skill;
 import com.example.server.models.User;
 
 import java.sql.SQLException;
@@ -36,5 +38,9 @@ public class SearchController extends BaseController {
         }
 
         return posts;
+    }
+
+    public static ArrayList<Skill> getSkills(String searchKey) throws SQLException {
+        return skillDB.getSkillsBySkill(searchKey);
     }
 }
