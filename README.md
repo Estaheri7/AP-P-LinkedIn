@@ -103,7 +103,7 @@ This project is the server-side implementation of a LinkedIn-like application de
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/Estaheri7/AP-P-LinkedIn.git
 cd your-repository
 ```
 
